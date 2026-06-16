@@ -419,3 +419,7 @@ Revendo alguns fundamentos antes de iniciar a aplicação
 dece se retomar da aula "Operadores de comparação"
 
 $$========================================$$
+16/06/2026   Celke PHP Fulstack Developer
+
+retomar da aula: "o que é array"
+$$========================================$$
