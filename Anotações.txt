@@ -423,3 +423,9 @@ $$========================================$$
 
 retomar da aula: "o que é array"
 $$========================================$$
+
+30/06/2026    Retornando das férias primeiro commit na Pabu
+
+retomar da aula: "o que é array"
+
+$$========================================$$
