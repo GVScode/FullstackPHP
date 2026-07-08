@@ -11,12 +11,12 @@ $resultadoDivisao = $a / $b / $c;
 $resultadoResto = $a % $b % $c;
 
 echo "O resultado da soma é: $resultadoSoma <br>";
-echo "O resultado da subtração é: $resultadoSubtracao <br>";        
+echo "O resultado da subtração é: $resultadoSubtracao <br>";
 echo "O resultado da multiplicação é: $resultadoMultiplicacao <br>";
 echo "O resultado da divisão é: $resultadoDivisao <br>";
 echo "O resultado do resto é: $resultadoResto <br>";
 
-echo "<hr>";    
+echo "<hr>";
 
 $contaCorrente = 38564.32;
 var_dump($contaCorrente);
@@ -29,4 +29,3 @@ echo "O valor do débito é R$ " . number_format($debito, 2, ',', '.') . " <br><
 $saldo = $contaCorrente - $debito;
 var_dump($saldo);
 echo "O saldo da conta corrente após o débito é R$ " . number_format($saldo, 2, ',', '.') . " <br><br>";
-?>

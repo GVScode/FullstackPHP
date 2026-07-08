@@ -46,7 +46,7 @@
     } else {
         echo "Utilizando NOT: Falso <br><br>";
     }
-    
+
     // Utilizando o operador lógico && (AND) para verificar se ambas as condições são verdadeiras
     if (($a == 10) && ($b == 8)) {
         echo "Utilizando &&: Verdadeiro <br><br>";

@@ -22,9 +22,9 @@
 
     if (($tipoPagamento == 1) and ($saldoContaCorrente >= $precoPizza)) {
         echo "Verdadeiro: O valor do saldo da conta corrente é suficiente para comprar a pizza <br><br>";
-    }elseif (($tipoPagamento == 2) and ($saldoCartaoCredito >= $precoPizza)) {
+    } elseif (($tipoPagamento == 2) and ($saldoCartaoCredito >= $precoPizza)) {
         echo "Verdadeiro: O valor do saldo do cartão de crédito é suficiente para comprar a pizza <br><br>";
-    }else {
+    } else {
         echo "Falso: O valor do saldo da conta corrente é insuficiente para comprar a pizza <br><br>";
     }
 

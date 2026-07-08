@@ -24,5 +24,3 @@ echo "5. Array   : " . json_encode($arr) . " (tipo: " . gettype($arr) . ")<br>";
 echo "6. Objeto  : " . get_class($obj) . " (tipo: " . gettype($obj) . ")<br>";
 echo "7. Nulo    : " . ($nulo === null ? 'NULL' : 'valor') . " (tipo: " . gettype($nulo) . ")<br>";
 echo "----------------------------------------";
-
-?>
