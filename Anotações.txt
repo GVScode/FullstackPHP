@@ -430,3 +430,26 @@ $$========================================$$
 06/07/2026    Iniciar proxima aula 
 
 *Comando de repetição WHILE
+
+$$========================================$$
+09/07/2026     Comando SQL pra criar a base de dados
+
+
+Create Database celke CHARACTER SET utf8mb4 COLATE utf8mb4_unicode_ci;
+
+Comando SQL para criar a tabela USERS
+
+ CREATE TABLE IF NOT EXISTS users (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(220) COLLATE utf8mb4_unicode_ci NOT NULL, 
+    email VARCHAR(220) COLLATE utf8mb4_unicode_ci NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+Comando SQL para apagar a tabela
+
+
+DROP TABLE IF EXISTS nome_da_tabela
+
+continuar a partir da aula "conectar PHP com banco de Dados"
