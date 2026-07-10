@@ -46,3 +46,16 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento:
    ```bash
    git clone https://github.com/GVScode/FullstackPHP.git
    
+
+2. **Comando SQL para criar a tabela USERS**
+
+   Create Database celke CHARACTER SET utf8mb4 COLATE utf8mb4_unicode_ci;
+
+ CREATE TABLE IF NO EXISTS 	users (
+       id int NOT NULL AUTO_INCREMENT,
+       name varchar(220) COLLATE utf8mb4_unicode_ci NOT NULL, 
+       email varchar(220) COLLATE utf8mb4_unicode_ci NOT NULL,
+       PRIMARY KEY (id)
+ )ENGINE=INNODB DEFAULT CHARACTER=utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
