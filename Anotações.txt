@@ -453,3 +453,10 @@ Comando SQL para apagar a tabela
 DROP TABLE IF EXISTS nome_da_tabela
 
 continuar a partir da aula "conectar PHP com banco de Dados"
+
+$$========================================$$
+10/07/2026   Conexão DB SQL X PHP 
+
+AULA CRUD - Cadastrar registro no Banco de Dados
+
+15:00 min 
