@@ -459,4 +459,4 @@ $$========================================$$
 
 AULA CRUD - Cadastrar registro no Banco de Dados
 
-15:00 min 
+19:40 min
