@@ -460,3 +460,10 @@ $$========================================$$
 AULA CRUD - Cadastrar registro no Banco de Dados
 
 19:40 min
+
+$$========================================$$
+20/07/2026  Conclusão da aula
+
+AULA CRUD - Cadastrar registro no Banco de Dados
+
+iniciar aula "Formulário cadastrar no banco de dados"
