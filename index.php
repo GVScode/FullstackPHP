@@ -16,6 +16,7 @@ require_once "./connection.php";
 //Prepara a query para ser executada no banco de dados
 //$stmt = $conn->prepare($sql);
 
+
 //Executa a query no banco de dados
 //$stmt->execute();               
 
@@ -43,5 +44,37 @@ require_once "./connection.php";
  /******* Usar link na QUERY  e substituir por bindValue *****/
 /************************************************************/
 
+//Criar a QUERY cadastrar usuario
+$sql = " INSERT INTO users (name, email) VALUES (:name, :email)";
+
+// Preparar a query
+$stmt = $conn->prepare($sql);
+
+//substituir os links da QUERY pelos valores 
+$stmt->bindValue(':name', 'João', PDO::PARAM_STR);
+$stmt->bindValue(':email', 'joao@gmail.com', PDO::PARAM_STR);
+
+//executa a query 
+$stmt->execute();
+
+
+
+   /************************************************************/
+  /******* Usar link na QUERY  e substituir por bindValue *****/
+ /***** Instrução preparada com ponto de interrigação (?) ****/
+/***********************************************************/
+
+//Criar a QUERY cadastrar usuario
+//$sql = " INSERT INTO users (name, email) VALUES (?, ?)";
+
+// Preparar a query
+//$stmt = $conn->prepare($sql);
+
+//substituir os links da QUERY pelos valores 
+//$stmt->bindValue(1, 'Ferdinando', PDO::PARAM_STR);
+//$stmt->bindValue(2, 'ferdinando@gmail.com', PDO::PARAM_STR);
+
+//executa a query 
+//$stmt->execute();
 
 echo "<p style='color: #086;'>executou todos os comandos!</p>";
