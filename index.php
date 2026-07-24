@@ -14,21 +14,53 @@ require_once('./connection.php');
 
 <body>
 
+  <?php
+  // Receber os dados do formulário
+  $data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+
+  // Verificar se o token CSRF é válido
+  if (isset($data['csrf_token'])) {
+    var_dump($data);
+
+    //Criar a query cadastrar usuario
+    $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
+
+    // Preparar a query
+    $stmt = $conn->prepare($sql);
+
+    //Substituir os links da QUERY pelos valores
+    $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+    $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+
+    // Executar a query
+    $stmt->execute();
+
+
+    // Acessa o IF quando cadastrar o registro no banco de dados
+
+    if ($stmt->rowCount()) {
+      echo "Usuário cadastrado com sucesso!";
+    } else {
+      echo "Erro: Usuário não cadastrado com sucesso!";
+    }
+  }
+  ?>
+
+
+
   <form method="POST" action="">
 
-      
-      
-      <input type="hidden" name="csrf_token" value="123456">
+    <input type="hidden" name="csrf_token" value="123456">
 
-      <label>nome</label> 
-      <input type="text" name="name" placeholder="nome completo" required>
-      <br><br>
+    <label>nome</label>
+    <input type="text" name="name" placeholder="nome completo" required>
+    <br><br>
 
-      <label>email</label>
-      <input type="email" name="email" id="email" required>
-      <br><br>
+    <label>email</label>
+    <input type="email" name="email" placeholder="Melhor e-mail" id="email" required>
+    <br><br>
 
-      <input type="submit" value="Cadastrar">
+    <input type="submit" value="Cadastrar">
 
 
 
