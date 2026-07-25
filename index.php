@@ -20,7 +20,7 @@ require_once('./connection.php');
 
   // Verificar se o token CSRF é válido
   if (isset($data['csrf_token'])) {
-    var_dump($data);
+    //var_dump($data);
 
     //Criar a query cadastrar usuario
     $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
@@ -39,9 +39,14 @@ require_once('./connection.php');
     // Acessa o IF quando cadastrar o registro no banco de dados
 
     if ($stmt->rowCount()) {
-      echo "Usuário cadastrado com sucesso!";
+      
+
+    // Recuperar o ID do registro cadastrado
+      $lastId = $conn->lastInsertId();
+
+      echo "<p style='color: #086;'>Usuário cadastrado com sucesso! - ID do registro: $lastId</p>";
     } else {
-      echo "Erro: Usuário não cadastrado com sucesso!";
+      echo "<p style='color: #f00;'>Erro: Usuário não cadastrado</p>";
     }
   }
   ?>
