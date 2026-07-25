@@ -2,6 +2,8 @@
 
 
 
+
+
 session_start(); // Inicia a sessão para armazenar o token CSRF
 
 
