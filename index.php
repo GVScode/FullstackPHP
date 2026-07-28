@@ -1,4 +1,12 @@
 <?php
+
+
+
+
+
+session_start(); // Inicia a sessão para armazenar o token CSRF
+
+
 //Inclui arquivo com a conexão com banco de dados
 require_once('./connection.php');
 ?>
@@ -19,7 +27,7 @@ require_once('./connection.php');
   $data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
 
   // Verificar se o token CSRF é válido
-  if (isset($data['csrf_token'])) {
+  if (isset($data['csrf_token']) && hash_equals($_SESSION['csrf_tokens']['form_create_user'], $data['csrf_token'])) {
     //var_dump($data);
 
     //Tratar exceções e erros
@@ -59,8 +67,21 @@ require_once('./connection.php');
     }
   }
   ?>
+
   <form method="POST" action="">
-    <input type="hidden" name="csrf_token" value="123456">
+
+    <?php
+    // A função random_bytes gera uma sequencia de 32 bytes aleatórios.
+    // Afunção bin2hex converte os bytes binarios gerados pela random_bytes em uma representação hexadecimal.
+
+    $token = bin2hex(random_bytes(32));
+
+    // Salvar o token CSRD na sessão
+    $_SESSION['csrf_tokens']['form_create_user'] = $token;
+
+    ?>
+
+    <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
 
     <label for="name">Nome</label>
     <input type="text" id="name" name="name" placeholder="Nome completo"
