@@ -33,6 +33,7 @@ require_once('./connection.php');
     //Tratar exceções e erros
     try {
 
+    
       //Criar a query cadastrar usuario
       $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
 
