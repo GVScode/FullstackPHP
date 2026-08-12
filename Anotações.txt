@@ -346,6 +346,15 @@ git switch main   # ou: git checkout main
 # 2. Agora sim, delete a branch desejada
 git branch -D exercicios_18_04
 
+
+Tipos Comuns de Prefixos para branchs:
+
+feat/ Para uma nova função ou recurso no sistema.fix/ Para consertar um erro ou bug.
+chore/ Para tarefas de manutenção ou ajustes de rotina.
+docs/ Para mudar apenas a documentação.
+refactor/ Para mudar o código sem alterar a função.
+
+
 iniciar uma área de trabalho (veja também: git help tutorial)
    clone     Clonar um repositório em um novo diretório
    init      Criar um repositório Git vazio ou reinicializar um existente
@@ -492,5 +501,7 @@ $$========================================$$
 04/08/2026  Inicio da aula CRUD - Visualizar detalhes do registro
 
 $$========================================$$
+11/08/2026   
 
+Visualizar detalhes do registro 02:25 min
 

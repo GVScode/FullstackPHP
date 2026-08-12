@@ -47,6 +47,7 @@ require_once('./connection.php');
         echo "Nome: $name <br>";
         echo "Email: $email <br>";
         echo "<hr>";
+    echo "<a href='view.php'>Visualizar</a> | ";
     }
 
 
