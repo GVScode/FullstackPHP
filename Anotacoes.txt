@@ -214,7 +214,7 @@ Praticar é muito importante! Por isso, preparamos uma lista de exercícios para
 Você pode clicar no botão “Opinião do instrutor” para conferir as respostas.
 
 
-Uma alternativa ao if/else é o switch case, que é uma estrutura de controle de fluxo que permite executar diferentes ações com base no valor de uma expressão. É uma forma mais simplificada e legível de escrever vários blocos if/else encadeados, desde que as operações sejam somente de igualdade.
+Uma aXlternativa ao if/else é o switch case, que é uma estrutura de controle de fluxo que permite executar diferentes ações com base no valor de uma expressão. É uma forma mais simplificada e legível de escrever vários blocos if/else encadeados, desde que as operações sejam somente de igualdade.
 
 A sintaxe do switch case em PHP é a seguinte:
 
@@ -504,4 +504,9 @@ $$========================================$$
 11/08/2026   
 
 Visualizar detalhes do registro 02:25 min
+
+$$========================================$$
+13/08/2026   
+
+Visualizar detalhes do registro 08:50 min
 
