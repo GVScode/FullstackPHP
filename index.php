@@ -22,34 +22,29 @@ require_once('./connection.php');
     <?php
 
     //Criar a query listar usuários
-    $sql = "SELECT id, name, email FROM users";
+    $sql = "SELECT id, name, email FROM users where id = :id";
 
     //preparar a query
     $stmt = $conn->prepare($sql);
 
+   
+   // substituir os links da query pelos valores
+   $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+   
     //executar a query
     $stmt->execute();
-    //var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
+    
 
-    while ($row_user = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // var_dump($row_user);
+    //ler os dados do registro
+    $row_user = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        //echo "ID: " . $row_user['id'] . "<br>";
-        //echo "Nome: " . $row_user['name'] . "<br>";
-        //echo "Email: " . $row_user['email'] . "<br>";
-
-        //Extrair o array para imprimir os valores através do elemento do array
-        extract($row_user);
+    extract($row_user);
 
 
-        //Imprimir as informações do registro
-        echo "ID: $id <br>";
-        echo "Nome: $name <br>";
-        echo "Email: $email <br>";
-        echo "<a href='view.php?id=$id'>Visualizar</a> | ";
-        echo "<hr>";
-    }
-
+    echo "ID: $id<br>";
+    echo "Nome: $name<br>";
+    echo "Email: $email<br>";
+    
 
 
 
