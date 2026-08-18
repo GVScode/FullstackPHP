@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual de Referência - OPUScase (1993)</title>
+  <style>
+    /* =========================================
+       VARIÁVEIS DE CORES (ALTERE AQUI PARA O LOGOTIPO)
+       ========================================= */
+    :root {
+      /* Cores sugeridas para software corporativo clássico (Intersystems/1993) */
+      --primary: #1e3a5f;       /* Azul Marinho Profundo (Cor principal do logo) */
+      --primary-light: #2c5282; /* Azul um pouco mais claro para hovers */
+      --accent: #c5a059;        /* Dourado/Âmbar (Detalhes e destaques) */
+      --bg: #f4f6f8;            /* Fundo geral (Cinza muito claro) */
+      --sidebar-bg: #ffffff;    /* Fundo da barra lateral */
+      --text: #2d3748;          /* Cor do texto principal */
+      --muted: #718096;         /* Texto secundário */
+      --border: #e2e8f0;        /* Bordas sutis */
+      --code-bg: #1a202c;       /* Fundo dos blocos de código/tela */
+      --code-text: #68d391;     /* Texto estilo terminal verde */
+      --sidebar-w: 300px;
+    }
+
+    /* Reset e Base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* Layout Principal */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* Barra Lateral (Sumário) */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--accent);
+    }
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .sidebar-header p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus { border-color: var(--primary); }
+
+    .toc { list-style: none; }
+    .toc li { margin-bottom: 0.2rem; }
+    .toc a {
+      display: block;
+      padding: 0.45rem 0.6rem;
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .toc a:hover { 
+      background: var(--bg); 
+      color: var(--primary); 
+      border-left-color: var(--accent);
+    }
+    .toc a.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      border-left-color: var(--accent);
+    }
+    .toc .sub { list-style: none; padding-left: 1rem; }
+    .toc .sub a { font-size: 0.82rem; color: var(--muted); }
+    .toc .sub a.active { color: #fff; }
+
+    /* Conteúdo Principal */
+    .content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 3rem 4rem;
+      max-width: 1000px;
+    }
+
+    .content-header {
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .content-header h1 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .content-header .meta {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .content-header .company {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--primary);
+      font-weight: 600;
+      background: var(--bg);
+      padding: 0.75rem;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .content section { margin-bottom: 3.5rem; scroll-margin-top: 2rem; }
+    .content h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .content h3 {
+      font-size: 1.2rem;
+      color: var(--primary-light);
+      margin: 1.5rem 0 0.75rem;
+      font-weight: 600;
+    }
+    .content p { margin-bottom: 1rem; text-align: justify; }
+    .content ul { margin: 0.5rem 0 1rem 1.5rem; }
+    .content ul li { margin-bottom: 0.4rem; }
+
+    /* Estilização de Telas e Código (ASCII Art) */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      margin: 1rem 0 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      background: rgba(30, 58, 95, 0.1);
+      color: var(--primary);
+      padding: 0.15rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Botão Voltar ao Topo */
+    #toTop {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 90;
+    }
+    #toTop.visible { opacity: 1; pointer-events: auto; }
+    #toTop:hover { transform: translateY(-3px); background: var(--primary-light); }
+
+    /* Menu Mobile */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); width: 280px; }
+      .sidebar.open { transform: translateX(0); }
+      .content { margin-left: 0; padding: 4rem 1.5rem 2rem; }
+      .menu-toggle { display: flex; align-items: center; justify-content: center; }
+      .content-header h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir sumário">☰</button>
+
+  <div class="layout">
+    <!-- ========== SUMÁRIO ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>OPUScase</h2>
+        <p>Manual de Referência<br>Versão I, Release 0 (1993)</p>
+      </div>
+      <input type="text" class="search-box" id="search" placeholder="🔍 Buscar no sumário..." />
+
+      <ul class="toc" id="toc">
+        <li><a href="#capa">Capa e Informações</a></li>
+        <li>
+          <a href="#introducao">1. Introdução</a>
+          <ul class="sub">
+            <li><a href="#intro-opus">1.1 Introdução ao OPUScase</a></li>
+            <li><a href="#intro-publico">1.2 Quem deve usar</a></li>
+            <li><a href="#intro-pre">1.3 Pré-Requisitos</a></li>
+            <li><a href="#intro-tela">1.4 Como Interpretar a tela</a></li>
+            <li><a href="#intro-teclado">1.5 Como funciona o teclado</a></li>
+            <li><a href="#intro-rotinas">1.6 Como funcionam as rotinas</a></li>
+            <li><a href="#intro-sintaxe">1.7 Como ler diagramas de sintaxe</a></li>
+            <li><a href="#intro-acesso">1.8 Acessando o OPUScase</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#dicionario">2. Dicionário de Dados</a>
+          <ul class="sub">
+            <li><a href="#dic-atributo">2.1 Atributo</a></li>
+            <li><a href="#dic-entidade">2.2 Entidade</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#comandos">3. Comandos</a>
+          <ul class="sub">
+            <li><a href="#cmd-apaga">3.2.1 Comando APAGA</a></li>
+            <li><a href="#cmd-ascii">3.2.2 Comando ASCII</a></li>
+            <li><a href="#cmd-chain">3.2.3 Comando CHAIN</a></li>
+            <li><a href="#cmd-se">3.2.28 Comando SE</a></li>
+            <li><a href="#cmd-faca">3.2.12 Comando FACA</a></li>
+            <li><a href="#cmd-geral">3.2.X Demais Comandos (Referência)</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#biblioteca">4. Biblioteca de Funções</a>
+          <ul class="sub">
+            <li><a href="#bib-udei">4.1.1 UDEI / UDIE</a></li>
+            <li><a href="#bib-wcab">4.1.6 WCAB</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#gerador">5. Gerador de Rotinas</a>
+          <ul class="sub">
+            <li><a href="#ger-acesso">5.1 Acessando o Desenvolvedor</a></li>
+            <li><a href="#ger-manutencao">5.2 Manutenção do Cadastro</a></li>
+            <li><a href="#ger-layout">5.3 Desenha Lay-out de Entrada</a></li>
+            <li><a href="#ger-saida">5.4 Lay-out de Saída</a></li>
+            <li><a href="#ger-logicos">5.5 Procedimentos Lógicos</a></li>
+            <li><a href="#ger-gera">5.6 Gera/Compila</a></li>
+            <li><a href="#ger-executa">5.7 Executa</a></li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ========== CONTEÚDO ========== -->
+    <main class="content">
+      
+      <div class="content-header" id="capa">
+        <h1>MANUAL DE REFERÊNCIA</h1>
+        <p class="meta">Primeira Edição (Janeiro de 1993)<br>
+        Aplica-se à Versão I, Release 0 do Gerador de Aplicativos OPUScase e a todos os releases subseqüentes.</p>
+        <div class="company">
+          INTERSYSTEMS CONSULTORIA DE SISTEMAS SIC LTDA.<br>
+          RUA TUTOIA, 324 - CONJ. 03 - IBIRAPUERA<br>
+          SÃO PAULO - SP
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--muted);">
+          <em>Mudanças são feitas periodicamente na informação aqui contida. Documentação referente a erros em programas ou comentários relativos ao conteúdo desta publicação devem ser enviados ao endereço acima.</em>
+        </p>
+      </div>
+
+      <section id="introducao">
+        <h2>1. INTRODUÇÃO</h2>
+        <p>Este Manual destina-se a orientar o programador/analista de sistemas que irá utilizar o OPUScase para a geração de rotinas.</p>
+
+        <h3 id="intro-opus">1.1 Introdução ao OPUScase</h3>
+        <p>O OPUScase é um produto do tipo I-CASE (Integrated Computer Aided Engeneering). Permite aos profissionais de informática desenhar e gerar aplicações de forma rápida, fácil, segura, livre de erros de sintaxe e auto-documentada, possibilitando desta maneira uma maior produtividade no desenvolvimento de sistemas computorizados.</p>
+        <p>O OPUScase é composto de:</p>
+        <ul>
+          <li>Dicionário de Dados</li>
+          <li>Editor de Telas de Entrada/Saída</li>
+          <li>Linguagem 4GL em português</li>
+          <li>Gerador de Rotinas em linguagem C</li>
+          <li>Gerenciador de Banco de Dados</li>
+          <li>Documentador de Manuais</li>
+        </ul>
+
+        <h3 id="intro-publico">1.2 Quem deve usar este manual</h3>
+        <p>Este manual deve ser utilizado pelo pessoal técnico que irá desenvolver rotinas através do OPUScase, servindo como fonte de consulta para dirimir eventuais dúvidas que venham surgir na utilização do sistema.</p>
+
+        <h3 id="intro-pre">1.3 Pré-Requisitos</h3>
+        <p>Para desenvolver rotinas em OPUScase, apesar de ser fácil e simples, é recomendável que você tenha o conhecimento dos seguintes assuntos:</p>
+        <ul>
+          <li>Conhecimento de Análise Orientada por Objetos.</li>
+          <li>Funções Básicas de Unix.</li>
+          <li>Programação em linguagem "C".</li>
+        </ul>
+
+        <h3 id="intro-tela">1.4 Como Interpretar a tela de uma rotina</h3>
+        <p>As rotinas geradas pelo OPUScase seguem a padronização SAA-CUA (System Architecture Application - Common Users Access). Exemplo de layout:</p>
+<pre><code>+---------------------------------------------------------------+
+| 1 ---> OPÇÃO  AJUDA                                           |
+| 2 ...> MENU   IDENTIFICA                                      |
+|    PRGID      NOME DA APLICAÇÃO             TTY               |
+| 4 .>                                                          |
+| 5 ...>                                                        |
+| 6 ..-> Mensagem:                                              |
+|    F01=HELP  F03=SAIDA                                        |
++---------------------------------------------------------------+</code></pre>
+        <ul>
+          <li><strong>Barra de Ação:</strong> Acionada pela tecla F10. Elementos: OPÇÕES, MENU, IDENTIFICA e AJUDA.</li>
+          <li><strong>PRGID:</strong> Exibe o Código da rotina em execução.</li>
+          <li><strong>TTY-DD:</strong> Exibe o número do terminal AIX (tty) e OPUScase.</li>
+          <li><strong>Área de Trabalho:</strong> Onde se visualiza o lay-out da rotina.</li>
+          <li><strong>Área de Mensagem:</strong> Disponível para mensagens do Sistema ao usuário.</li>
+          <li><strong>Teclas de Ação:</strong> F01 (HELP), F03 (SAÍDA), F10 (AÇÃO), F12 (ELIMINA).</li>
+        </ul>
+
+        <h3 id="intro-teclado">1.5 COMO FUNCIONA O TECLADO</h3>
+        <p>A execução de uma rotina implica na digitação de informações nos campos solicitados. O sistema permite:</p>
+        <ul>
+          <li><strong>Movimentação:</strong> Ctrl K/↑ (anterior), Ctrl J/↓ (próximo/enter), Ctrl H/← (esquerda), Ctrl L/→ (direita).</li>
+          <li><strong>Deleção:</strong> Ctrl T (apaga resto), Ctrl G/Delete (apaga caractere), Ctrl D (limpa campo).</li>
+          <li><strong>Inserção:</strong> Ctrl I ou Insert (muda modo Inserção/Substituição).</li>
+        </ul>
+
+        <h3 id="intro-rotinas">1.6 COMO FUNCIONAM AS ROTINAS</h3>
+        <p>A execução obedece aos seguintes critérios: da esquerda para direita e de cima para baixo. O campo é classificado em: Obrigatório, Não Obrigatório ou Faixa.</p>
+        <p>As rotinas são classificadas em: Data-entry, Impresso, Opções, Relatórios, Sub-rotinas e Tabelas.</p>
+
+        <h3 id="intro-sintaxe">1.7 Como ler os diagramas de Sintaxe</h3>
+        <ul>
+          <li>Ler o diagrama da sintaxe da esquerda para a direita e do topo para baixo.</li>
+          <li>O símbolo <code>►</code> indica o começo do comando.</li>
+          <li>Palavras-chave aparecem em letras maiúsculas e devem ser especificadas exatamente como mostradas.</li>
+          <li>Variáveis aparecem em letras itálicas e representam valores fornecidos pelo usuário.</li>
+        </ul>
+
+        <h3 id="intro-acesso">1.8 ACESSANDO O OPUScase</h3>
+        <p>Através da execução da Rotina OPUS o usuário acessa a tela de identificação. Após informar Empresa, Filial e Almoxarifado, o sistema exibe os sistemas habilitados. Informando "YLA" no campo SMR, acessa-se a tela principal com a Barra de Ação: ATRIBUTOS, ENTIDADES, ROTINAS, DESENVOLVE, DOCUMENTAÇÃO.</p>
+      </section>
+
+      <section id="dicionario">
+        <h2>2. DICIONÁRIO DE DADOS</h2>
+        <p>Dicionário de Dados é o conjunto das definições e especificações dos atributos e entidades, únicos no sistema. Contém as informações necessárias para a consistência dos atributos utilizados e as diretivas para a atualização e recuperação da informação na base de dados.</p>
+
+        <h3 id="dic-atributo">2.1 ATRIBUTO</h3>
+        <p>Atributo é a designação dada a uma informação determinando o formato e suas consistências. É único no sistema.</p>
+        <h4>Elementos da especificação de um atributo:</h4>
+        <ul>
+          <li><strong>Banco:</strong> Caractere alfabético identificador do projeto.</li>
+          <li><strong>Atributo:</strong> Forma reduzida da identificação (até 7 caracteres alfanuméricos).</li>
+          <li><strong>Denominação:</strong> Nome do atributo (até 30 caracteres).</li>
+          <li><strong>Tamanho:</strong> Quantidade de caracteres.</li>
+          <li><strong>Fixo/Variável:</strong> (F) preenchimento completo ou (V) até o limite.</li>
+          <li><strong>Formato:</strong> A (Alfabético), D (Data), E (Qualquer), H (Hora), M (Alfanumérico), N (Numérico), V (Monetário).</li>
+        </ul>
+
+        <h3 id="dic-entidade">2.2 ENTIDADE</h3>
+        <p>É a designação dada a um conjunto de definições de um determinado objeto, agrupadas em: Cabeçalho, Registro e Visões.</p>
+        <ul>
+          <li><strong>Cabeçalho:</strong> Tipo de arquivo, chave principal e diretório.</li>
+          <li><strong>Registro:</strong> Todos os campos que compõe o arquivo.</li>
+          <li><strong>Visões:</strong> Chaves secundárias de acesso ao registro (até 10 visões, de 0 a 9).</li>
+        </ul>
+      </section>
+
+      <section id="comandos">
+        <h2>3. COMANDOS</h2>
+        <p>A linguagem OPUScase contém inúmeros comandos que podem ser usados pelo programador na criação de rotinas. Cada comando realiza ações definidas pelos argumentos e operadores associados.</p>
+
+        <h3 id="cmd-apaga">3.2.1 Comando APAGA</h3>
+        <p><strong>Propósito:</strong> Eliminar todas as informações de uma entidade que estejam vinculadas ao nível informado.</p>
+        <pre><code>------ APAGA ----- entidade ----- , ----- nível --------</code></pre>
+        <p><em>Exemplo:</em> <code>APAGA EPRODU,2</code></p>
+
+        <h3 id="cmd-ascii">3.2.2 Comando ASCII</h3>
+        <p><strong>Propósito:</strong> Converte um caractere ASCII para seu valor decimal, armazenando-o na variável ASCII.</p>
+        <pre><code>--------- ASCII ----- literal ------ , ----- posição do atributo -------</code></pre>
+
+        <h3 id="cmd-chain">3.2.3 Comando CHAIN</h3>
+        <p><strong>Propósito:</strong> Verifica a existência de um registro em disco através de um acesso direto ao registro.</p>
+        <pre><code>----------- CHAIN ------ entidade ---------</code></pre>
+
+        <h3 id="cmd-faca">3.2.12 Comando FACA</h3>
+        <p><strong>Propósito:</strong> Atribuir valores a uma variável.</p>
+        <pre><code>------------- FACA --------- variável-destino ---------- --------- expressão string --------</code></pre>
+        <p><em>Exemplo:</em> <code>FACA A="128"</code> ou <code>FACA A=B_"128"</code></p>
+
+        <h3 id="cmd-se">3.2.28 Comando SE</h3>
+        <p><strong>Propósito:</strong> Condicionar todos os comandos ou colunas dentro de um bloco ao resultado afirmativo de seu argumento.</p>
+        <pre><code>------------- SE ------- expressão relacional ---------------</code></pre>
+        <p>Operadores relacionais: <code>></code> (maior), <code><</code> (menor), <code>=</code> (igual), <code>~</code> (não).</p>
+
+        <h3 id="cmd-geral">3.2.X Demais Comandos (Resumo da Referência)</h3>
+        <p>O manual completo abrange os seguintes comandos adicionais: CHAR, COMENT, COMPUTE, DECLARA, ENTIDADE, EXIBE, EXTRAIR, FIM, GOTO, HABILITA, JANELA, LIMPA, LINHA, MATA, MATATUDO, MENSAGEM, MOSTRA, PARA, PROCURAR, PULAFOL, PULALINHA, RESTO, SELDISP, SELECIONAR, SUBROT, TAMANHO, TECLADO, VARIAR, VERNOS e VERPRO. Consulte a documentação física para a sintaxe detalhada de cada um.</p>
+      </section>
+
+      <section id="biblioteca">
+        <h2>4. BIBLIOTECA DE FUNÇÕES</h2>
+        <p>O OPUScase dispõe de uma biblioteca própria de funções (libadis.a) que podem ser utilizadas em uma rotina.</p>
+
+        <h3 id="bib-udei">4.1.1 UDEI / 4.1.2 UDIE (Datas)</h3>
+        <ul>
+          <li><strong>UDEI:</strong> Converte data externa (DD/MM/AA) em data interna (dias decorridos desde 01/01/1900).</li>
+          <li><strong>UDIE:</strong> Converte data interna em data externa.</li>
+        </ul>
+
+        <h3 id="bib-wcab">4.1.6 WCAB</h3>
+        <p><strong>Propósito:</strong> Executa a operação de impressão do cabeçalho durante a emissão de um relatório. Faz uso das variáveis ZXLP, ZXTP, ZXPG, ZXCL, ZNC e WPROMPT.</p>
+      </section>
+
+      <section id="gerador">
+        <h2>5. GERADOR DE ROTINAS</h2>
+        <p>O gerador de rotinas é usado para criar, editar, montar/compilar, documentar e testar rotinas. É constituído de fases sequenciais.</p>
+
+        <h3 id="ger-acesso">5.1 Acessando o Desenvolvedor de Rotinas</h3>
+        <p>Enderece o cursor, através da Barra de Ação, no campo <code>DESENVOLVE</code> e pressione ENTER.</p>
+
+        <h3 id="ger-manutencao">5.2 Manutenção do Cadastro de Rotinas</h3>
+        <p>Etapa necessária para criar e/ou editar o cadastro. Campos principais: Nome da Rotina, Denominação, Banco, Status (Liberado/Manutenção), Tipo (C, D, I, L, O, R, S, T), Complemento, Formulário, Autor, Box Ocupado, PF Admitidas e Action Bar.</p>
+
+        <h3 id="ger-layout">5.3 Desenha Lay-out de Entrada</h3>
+        <p>O OPUScase formata a tela delimitada pelos parâmetros de BOX. Utiliza-se o caractere <code>]</code> (fecha colchete) para indicar Entrada de Dados (atributos). Teclas de ajuda: Ctrl F (PF's), Ctrl B (Box), Ctrl A (Barra de Ação).</p>
+
+        <h3 id="ger-saida">5.4 Lay-out de Saída</h3>
+        <p>Dividido em: <strong>Desenha Lay-out</strong> (usando o caractere <code>]</code> para posicionamento) e <strong>Agrega Atributos</strong> (onde se define Linha, Atributo, Índice, De-Até, Ajuste e Preenchimento).</p>
+
+        <h3 id="ger-logicos">5.5 Procedimentos Lógicos</h3>
+        <p>Região composta de linhas e colunas (Linha, Rótulo, Comando, Atributo, Entidade, Sub-Rotina, Vai-para, Imprime) onde se programa a lógica da rotina.</p>
+<pre><code>Lin  Rotulo  Comando   Atributo      Registro  Sub-rot.  Vai-Para  Imprime
+010  INICIO  SELDISP
+020  CAB     SUBROT    WCAB                              CAB
+030  PESQ    ENTIDADE  TABEST,G                          FIM
+040  FIM     FIM</code></pre>
+
+        <h3 id="ger-gera">5.6 Gera/Compila</h3>
+        <p>O OPUScase gera um programa fonte na linguagem C e compila gerando um código executável. Caso ocorra erro, deve-se retornar aos Procedimentos Lógicos para correção.</p>
+
+        <h3 id="ger-executa">5.7 Executa</h3>
+        <p>Posicione o cursor no campo EXECUTA PROGRAMA e digite ENTER. A rotina é executada pelo OPUScase conforme a sua definição, simulando o ambiente do usuário final.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <button id="toTop" aria-label="Voltar ao topo">↑</button>
+
+  <script>
+    /* ===== Scroll suave nos links do sumário ===== */
+    document.querySelectorAll('.toc a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        const target = document.querySelector(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Fecha menu mobile após clique
+          document.getElementById('sidebar').classList.remove('open');
+        }
+      });
+    });
+
+    /* ===== Destacar item ativo conforme o scroll (Intersection Observer) ===== */
+    // Seleciona todas as seções e h3 que possuem ID
+    const sections = document.querySelectorAll('.content section, .content h3[id]');
+    const tocLinks = document.querySelectorAll('.toc a');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          tocLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-10% 0px -70% 0px' }); // Ajuste para destacar um pouco antes do topo
+
+    sections.forEach(sec => observer.observe(sec));
+
+    /* ===== Busca/filtro no sumário ===== */
+    const search = document.getElementById('search');
+    search.addEventListener('input', () => {
+      const term = search.value.toLowerCase().trim();
+      document.querySelectorAll('.toc li').forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.style.display = text.includes(term) ? '' : 'none';
+      });
+    });
+
+    /* ===== Botão voltar ao topo ===== */
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 500);
+    });
+    toTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ===== Menu hambúrguer (mobile) ===== */
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    
+    // Fechar sidebar ao clicar fora no mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && 
+          !sidebar.contains(e.target) && 
+          !menuToggle.contains(e.target) && 
+          sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
