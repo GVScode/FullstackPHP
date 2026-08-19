@@ -1,5 +1,7 @@
 <?php
 
+session_start(); // Inicia a sessão 
+
 //Inclui arquivo com a conexão com banco de dados
 require_once('./connection.php');
 ?>
@@ -15,7 +17,7 @@ require_once('./connection.php');
 </head>
 
 <body>
-    <a href="index.php">listar</a>
+    
 
     <h2>Visualizar detalhes do usuário</h2>
 
@@ -38,16 +40,31 @@ require_once('./connection.php');
 
     //Ler os dados do registro
     $row_user = $stmt->fetch(PDO::FETCH_ASSOC);
-
     var_dump($row_user);
 
+    if ($row_uaer ?? false){
 
+      // Extrair o array para imprimir os valores atraves do elemento do array
+     extract($row_user);
+
+  
+    echo "ID: " . $id . "<br>";
+    echo "Nome: " . $name . "<br>";
+    echo "Email: " . $email . "<br>";
+   
+    } else {
+
+    $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Usuário não encontrado!</p>";
+        
+    header("Location: index.php");
+
+    }
 
     ?>
 
 
 
 
-</body>l
+</body>
 
 </html>

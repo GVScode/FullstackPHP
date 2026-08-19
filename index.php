@@ -20,6 +20,13 @@ require_once('./connection.php');
     <h2>Listar Usuários</h2>
 
     <?php
+    
+//verificar se existe a mensagem de sucesso e erro
+    if (isset($_SESSION['msg'])) {
+        echo $_SESSION['msg'];
+        unset($_SESSION['msg']);
+    }
+
 
     //Criar a query listar usuários
     $sql = "SELECT id, name, email FROM users where id = :id";
@@ -27,30 +34,26 @@ require_once('./connection.php');
     //preparar a query
     $stmt = $conn->prepare($sql);
 
-   
-   // substituir os links da query pelos valores
-   $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-   
+
+    // substituir os links da query pelos valores
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
     //executar a query
     $stmt->execute();
-    
-
-    //ler os dados do registro
-    $row_user = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    extract($row_user);
 
 
-    echo "ID: $id<br>";
-    echo "Nome: $name<br>";
-    echo "Email: $email<br>";
-    
+    while ($row_user = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
+        //ler os dados do registro
+        //$row_user = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-    ?>
+        // Extrair o array para imprimir os valores atraves do elemento do array
+        extract($row_user);
 
-</body>
 
-</html>
+        echo "ID: $id<br>";
+        echo "Nome: $name<br>";
+        echo "Email: $email<br>";
+    }

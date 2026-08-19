@@ -1,6 +1,6 @@
 <?php
 
-session_start(); // Inicia a sessão para armazenar o token CSRF
+session_start(); // Inicia a sessão 
 
 //Inclui arquivo com a conexão com banco de dados
 require_once('./connection.php');
@@ -17,7 +17,7 @@ require_once('./connection.php');
 
 <body>
 
-  <a href="index.php">listar</a>
+  <a href="view.php">listar</a>
 
   <h2>Cadastro de Usuário</h2>
 
