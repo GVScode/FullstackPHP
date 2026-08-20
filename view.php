@@ -17,9 +17,10 @@ require_once('./connection.php');
 </head>
 
 <body>
-    
 
-    <h2>Visualizar detalhes do usuário</h2>
+    <a href="index.php">Listar</a><br>
+
+    <h2>Visualizar usuário</h2>
 
     <?php
 
@@ -42,22 +43,20 @@ require_once('./connection.php');
     $row_user = $stmt->fetch(PDO::FETCH_ASSOC);
     var_dump($row_user);
 
-    if ($row_uaer ?? false){
+    if ($row_uaer ?? false) {
 
-      // Extrair o array para imprimir os valores atraves do elemento do array
-     extract($row_user);
+        // Extrair o array para imprimir os valores atraves do elemento do array
+        extract($row_user);
 
-  
-    echo "ID: " . $id . "<br>";
-    echo "Nome: " . $name . "<br>";
-    echo "Email: " . $email . "<br>";
-   
+
+        echo "ID: " . $id . "<br>";
+        echo "Nome: " . $name . "<br>";
+        echo "Email: " . $email . "<br>";
     } else {
 
-    $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Usuário não encontrado!</p>";
-        
-    header("Location: index.php");
+        $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Usuário não encontrado!</p>";
 
+        header("Location: index.php");
     }
 
     ?>
