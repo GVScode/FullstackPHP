@@ -1,370 +1,851 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manual de Boas vindas - Opus Case</title>
-  <style>
-    /* ---------- Reset e variáveis ---------- */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Manual — Sua Marca</title>
+<!-- Pré-conexão para acelerar o carregamento das fontes do Google -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Importação das fontes: Inter (texto geral) e JetBrains Mono (códigos e números) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* =========================================
+     1. RESET & VARIÁVEIS GLOBAIS (CSS CUSTOM PROPERTIES)
+     Centraliza cores, espaçamentos e sombras para facilitar a manutenção.
+     Alterar aqui muda o site inteiro (princípio DRY - Don't Repeat Yourself).
+     ========================================= */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    /* Cores de fundo (Dark Mode) */
+    --bg: #070b14;
+    --bg-soft: #0c1220;
+    --bg-card: rgba(255,255,255,0.03); /* Fundo sutil com transparência */
+    --bg-elevated: rgba(255,255,255,0.05);
+    
+    /* Bordas e Textos */
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14);
+    --text: #e8ecf5;
+    --text-dim: #9aa3b8;
+    --text-mute: #6b7490;
+    
+    /* Cores de destaque (Laranja e Azul) */
+    --orange: #f97316;
+    --orange-soft: #fb923c;
+    --blue: #3b82f6;
+    --blue-soft: #60a5fa;
+    
+    /* Gradientes e Efeitos */
+    --gradient: linear-gradient(135deg, #f97316 0%, #3b82f6 100%);
+    --gradient-soft: linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(59,130,246,0.15) 100%);
+    --shadow: 0 20px 60px -20px rgba(59,130,246,0.35);
+    
+    /* Dimensões e Espaçamentos */
+    --radius: 14px;
+    --radius-lg: 20px;
+    --sidebar-w: 280px; /* Largura fixa da barra lateral */
+  }
 
-    :root {
-      --bg: #f5f7fa;
-      --sidebar-bg: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2563eb;
-      --primary-light: #dbeafe;
-      --border: #e5e7eb;
-      --shadow: 0 2px 8px rgba(0,0,0,0.05);
-      --sidebar-w: 280px;
+  /* scroll-behavior: smooth faz a rolagem por âncoras (#id) ser suave.
+     scroll-padding-top compensa a altura da navbar fixa para o título não ficar escondido. */
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+    -webkit-font-smoothing: antialiased; /* Deixa as fontes mais nítidas no macOS */
+  }
+
+  /* Efeito de "Glow" (brilho) no fundo da página.
+     pointer-events: none é CRUCIAL: impede que esse fundo bloqueie cliques nos elementos.
+     z-index: 0 garante que fique atrás de todo o conteúdo. */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(249,115,22,0.12), transparent 45%),
+      radial-gradient(circle at 90% 70%, rgba(59,130,246,0.14), transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(59,130,246,0.06), transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Reset básico de elementos */
+  a { color: inherit; text-decoration: none; }
+  img, svg { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* =========================================
+     2. BARRA DE PROGRESSO DE LEITURA
+     ========================================= */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 200; /* Fica acima de tudo, inclusive da navbar */
+  }
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%; /* Será alterado via JavaScript conforme o scroll */
+    background: var(--gradient);
+    box-shadow: 0 0 10px rgba(249,115,22,0.6);
+    transition: width 0.1s ease-out; /* Suaviza a atualização da largura */
+  }
+
+  /* =========================================
+     3. NAVBAR (Cabeçalho Fixo)
+     ========================================= */
+  .navbar {
+    position: fixed; top: 3px; left: 0; right: 0;
+    z-index: 100;
+    padding: 14px 0;
+    /* Efeito de vidro fosco (Glassmorphism) */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(7,11,20,0.7);
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+  }
+  /* Classe adicionada via JS quando o usuário rola a página */
+  .navbar.scrolled { border-bottom-color: var(--border); }
+  
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;
+  }
+  .logo-mark {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--gradient);
+    display: grid; place-items: center; /* Centraliza o ícone SVG */
+    box-shadow: 0 8px 24px -8px rgba(249,115,22,0.5);
+  }
+  .logo-sub { font-size: 0.75rem; color: var(--text-mute); font-weight: 500; margin-left: 2px; }
+  
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 10px;
+    font-weight: 600; font-size: 0.88rem;
+    transition: all 0.25s ease; white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--gradient); color: white;
+    box-shadow: 0 8px 24px -8px rgba(249,115,22,0.5);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(249,115,22,0.7); }
+  
+  .btn-ghost { color: var(--text-dim); }
+  .btn-ghost:hover { color: var(--text); background: var(--bg-card); }
+  
+  .search-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 10px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-dim); font-size: 0.85rem; transition: all 0.2s;
+  }
+  .search-btn:hover { border-color: var(--orange); color: var(--text); }
+  .search-btn kbd {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    padding: 2px 6px; border-radius: 4px;
+    background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-mute);
+  }
+  .menu-toggle { display: none; } /* Visível apenas no mobile via media query */
+
+  /* =========================================
+     4. LAYOUT PRINCIPAL (CSS GRID)
+     ========================================= */
+  .layout {
+    display: grid;
+    /* Cria duas colunas: sidebar com largura fixa e conteúdo ocupando o resto (1fr) */
+    grid-template-columns: var(--sidebar-w) 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 100px 24px 60px; /* Padding top compensa a navbar fixa */
+    gap: 48px;
+    position: relative;
+    z-index: 1; /* Fica acima do glow de fundo */
+  }
+
+  /* =========================================
+     5. SIDEBAR (SUMÁRIO STICKY)
+     ========================================= */
+  .sidebar { position: relative; }
+  .sidebar-inner {
+    position: sticky;
+    top: 100px; /* "Gruda" no topo quando rola, com offset da navbar */
+    max-height: calc(100vh - 120px); /* Impede que ultrapasse a altura da tela */
+    overflow-y: auto; /* Permite rolagem interna se o sumário for muito longo */
+    padding-right: 8px;
+  }
+  /* Estilização da barra de rolagem fina da sidebar */
+  .sidebar-inner::-webkit-scrollbar { width: 4px; }
+  .sidebar-inner::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  
+  .sidebar-title {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--text-mute);
+    margin-bottom: 16px; padding-left: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sidebar-title::before {
+    content: ''; width: 14px; height: 2px;
+    background: var(--gradient); border-radius: 2px;
+  }
+  
+  .toc { list-style: none; }
+  .toc-item { margin-bottom: 2px; }
+  .toc-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-radius: 10px;
+    color: var(--text-dim); font-size: 0.9rem; font-weight: 500;
+    transition: all 0.2s; border-left: 2px solid transparent;
+  }
+  .toc-link:hover { color: var(--text); background: var(--bg-card); }
+  /* Estado ativo controlado pelo JavaScript (Scroll Spy) */
+  .toc-link.active {
+    color: var(--orange-soft); background: rgba(249,115,22,0.08);
+    border-left-color: var(--orange);
+  }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    color: var(--text-mute); min-width: 22px; font-weight: 500;
+  }
+  .toc-link.active .toc-num { color: var(--orange); }
+  
+  /* Sub-itens do sumário */
+  .toc-sub {
+    list-style: none; margin-left: 32px; padding-left: 12px;
+    border-left: 1px solid var(--border);
+  }
+  .toc-sub .toc-link { font-size: 0.82rem; padding: 6px 12px; color: var(--text-mute); }
+  .toc-sub .toc-link:hover { color: var(--text-dim); }
+  .toc-sub .toc-link.active { color: var(--blue-soft); border-left-color: var(--blue); background: rgba(59,130,246,0.06); }
+
+  /* =========================================
+     6. CONTEÚDO PRINCIPAL E TIPOGRAFIA
+     ========================================= */
+  .content { min-width: 0; max-width: 860px; } /* min-width: 0 evita que grids quebrem em telas pequenas */
+
+  .cover { padding: 48px 0 64px; border-bottom: 1px solid var(--border); margin-bottom: 56px; position: relative; }
+  .cover-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 100px;
+    background: var(--gradient-soft); border: 1px solid rgba(249,115,22,0.25);
+    font-size: 0.8rem; color: var(--orange-soft); font-weight: 600; margin-bottom: 24px;
+  }
+  .cover-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+  
+  .cover h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+  /* Classe utilitária para texto com gradiente */
+  .gradient-text { background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  
+  .cover-lead { font-size: 1.15rem; color: var(--text-dim); max-width: 640px; margin-bottom: 32px; }
+  
+  .cover-meta {
+    display: flex; flex-wrap: wrap; gap: 24px; padding: 20px 24px;
+    border-radius: var(--radius); background: var(--bg-card); border: 1px solid var(--border);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-mute); font-weight: 600; }
+  .meta-value { font-size: 0.95rem; color: var(--text); font-weight: 600; }
+
+  /* Capítulos */
+  .chapter { padding: 48px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 100px; }
+  .chapter:last-of-type { border-bottom: none; }
+  .chapter-head { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 32px; }
+  .chapter-num {
+    flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px;
+    background: var(--gradient); display: grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.1rem; color: white;
+    box-shadow: 0 8px 24px -8px rgba(249,115,22,0.5);
+  }
+  .chapter-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px; }
+  .chapter-subtitle { color: var(--text-dim); font-size: 1rem; }
+
+  /* Estilos de texto dentro do conteúdo */
+  .content h3 {
+    font-size: 1.35rem; font-weight: 700; margin: 36px 0 16px;
+    letter-spacing: -0.01em; scroll-margin-top: 100px; /* Garante que o título não fique escondido pela navbar ao clicar no link */
+    display: flex; align-items: center; gap: 10px;
+  }
+  .content h3::before { content: ''; width: 4px; height: 20px; background: var(--gradient); border-radius: 2px; }
+  .content h4 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 12px; color: var(--blue-soft); }
+  .content p { margin-bottom: 16px; color: var(--text-dim); }
+  .content p strong { color: var(--text); font-weight: 600; }
+  .content ul, .content ol { margin: 0 0 20px 24px; color: var(--text-dim); }
+  .content li { margin-bottom: 8px; }
+  .content li::marker { color: var(--orange); } /* Cor personalizada para marcadores de lista */
+  
+  .content a.inline-link { color: var(--blue-soft); border-bottom: 1px dashed var(--blue-soft); transition: all 0.2s; }
+  .content a.inline-link:hover { color: var(--orange-soft); border-color: var(--orange-soft); }
+  
+  /* Blocos de código */
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    padding: 2px 7px; border-radius: 5px; background: var(--bg-elevated);
+    border: 1px solid var(--border); color: var(--orange-soft);
+  }
+  pre {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; overflow-x: auto; margin: 20px 0; position: relative;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--text); font-size: 0.88rem; line-height: 1.6; }
+
+  /* =========================================
+     7. CALLOUTS (Blocos de Destaque)
+     Usa herança de CSS para evitar repetição de código.
+     ========================================= */
+  .callout {
+    display: flex; gap: 14px; padding: 18px 20px; border-radius: var(--radius);
+    margin: 24px 0; border-left: 3px solid; background: var(--bg-card);
+  }
+  .callout-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; }
+  .callout-content { flex: 1; }
+  .callout-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+  .callout-text { font-size: 0.92rem; color: var(--text-dim); margin: 0; }
+
+  /* Modificadores de estado para os callouts */
+  .callout.info { border-color: var(--blue); background: rgba(59,130,246,0.06); }
+  .callout.info .callout-icon { background: rgba(59,130,246,0.15); color: var(--blue-soft); }
+  .callout.info .callout-title { color: var(--blue-soft); }
+
+  .callout.tip { border-color: var(--orange); background: rgba(249,115,22,0.06); }
+  .callout.tip .callout-icon { background: rgba(249,115,22,0.15); color: var(--orange-soft); }
+  .callout.tip .callout-title { color: var(--orange-soft); }
+
+  .callout.warning { border-color: #eab308; background: rgba(234,179,8,0.06); }
+  .callout.warning .callout-icon { background: rgba(234,179,8,0.15); color: #fbbf24; }
+  .callout.warning .callout-title { color: #fbbf24; }
+
+  .callout.danger { border-color: #ef4444; background: rgba(239,68,68,0.06); }
+  .callout.danger .callout-icon { background: rgba(239,68,68,0.15); color: #f87171; }
+  .callout.danger .callout-title { color: #f87171; }
+
+  /* =========================================
+     8. COMPONENTES AUXILIARES (Grid, Tabelas, Passos)
+     ========================================= */
+  .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+  .feature-item {
+    padding: 20px; border-radius: var(--radius); background: var(--bg-card);
+    border: 1px solid var(--border); transition: all 0.25s;
+  }
+  .feature-item:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
+  .feature-item-icon {
+    width: 38px; height: 38px; border-radius: 10px; background: var(--gradient-soft);
+    border: 1px solid rgba(249,115,22,0.2); display: grid; place-items: center;
+    color: var(--orange-soft); margin-bottom: 12px;
+  }
+  .feature-item h5 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .feature-item p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+
+  .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; background: var(--bg-card); }
+  th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+  th { background: var(--bg-elevated); font-weight: 600; color: var(--text); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  tr:last-child td { border-bottom: none; }
+  td { color: var(--text-dim); }
+
+  .steps-list { display: flex; flex-direction: column; gap: 16px; margin: 20px 0; }
+  .step-item { display: flex; gap: 16px; padding: 20px; border-radius: var(--radius); background: var(--bg-card); border: 1px solid var(--border); }
+  .step-num {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+    background: var(--gradient); display: grid; place-items: center;
+    font-weight: 700; color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem;
+  }
+  .step-content h5 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .step-content p { margin: 0; font-size: 0.92rem; }
+
+  /* =========================================
+     9. BOTÃO "VOLTAR AO TOPO" E FOOTER
+     ========================================= */
+  .back-top {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--gradient); display: grid; place-items: center; color: white;
+    box-shadow: 0 10px 30px -8px rgba(249,115,22,0.5);
+    opacity: 0; pointer-events: none; transform: translateY(20px);
+    transition: all 0.3s; z-index: 90;
+  }
+  /* Classe adicionada via JS para mostrar o botão */
+  .back-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .back-top:hover { transform: translateY(-4px); }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 24px; background: var(--bg-soft); position: relative; z-index: 1; }
+  .footer-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; color: var(--text-mute); font-size: 0.88rem; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--text-dim); transition: color 0.2s; }
+  .footer-links a:hover { color: var(--orange-soft); }
+
+  .chapter-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+  .chapter-nav-item { padding: 20px; border-radius: var(--radius); background: var(--bg-card); border: 1px solid var(--border); transition: all 0.25s; display: flex; flex-direction: column; gap: 6px; }
+  .chapter-nav-item:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
+  .chapter-nav-item.next { text-align: right; align-items: flex-end; }
+  .chapter-nav-label { font-size: 0.75rem; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .chapter-nav-title { font-weight: 700; color: var(--text); }
+
+  /* =========================================
+     10. ANIMAÇÕES E RESPONSIVIDADE
+     ========================================= */
+  .reveal { opacity: 0; transform: translateY(20px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; padding-top: 80px; } /* Coluna única no mobile/tablet */
+    .sidebar { position: relative; order: -1; } /* Move sidebar para cima do conteúdo */
+    .sidebar-inner {
+      position: relative; top: 0; max-height: none;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
     }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    /* ---------- Layout ---------- */
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* ---------- Sidebar (Sumário) ---------- */
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border);
-      padding: 1.5rem 1rem;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease;
-    }
-
-    .sidebar h2 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-      border-bottom: 2px solid var(--primary);
-      padding-bottom: 0.5rem;
-    }
-
-    .sidebar .search {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-      outline: none;
-    }
-    .sidebar .search:focus { border-color: var(--primary); }
-
-    .toc { list-style: none; }
-    .toc li { margin-bottom: 0.25rem; }
-
-    .toc a {
-      display: block;
-      padding: 0.4rem 0.6rem;
-      color: var(--text);
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.92rem;
-      transition: background 0.2s, color 0.2s;
-    }
-    .toc a:hover { background: var(--primary-light); color: var(--primary); }
-
-    .toc a.active {
-      background: var(--primary);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .toc .sub { list-style: none; padding-left: 1rem; }
-    .toc .sub a { font-size: 0.85rem; color: var(--muted); }
-
-    /* ---------- Conteúdo ---------- */
-    .content {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      padding: 2.5rem 3rem;
-      max-width: 900px;
-    }
-
-    .content h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .content section {
-      margin-bottom: 3rem;
-      scroll-margin-top: 1rem;
-    }
-
-    .content h2 {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-      color: var(--text);
-      border-left: 4px solid var(--primary);
-      padding-left: 0.75rem;
-    }
-
-    .content h3 {
-      font-size: 1.15rem;
-      margin: 1.25rem 0 0.5rem;
-      color: var(--muted);
-    }
-
-    .content p { margin-bottom: 1rem; }
-
-    .content ul { margin: 0.5rem 0 1rem 1.5rem; }
-    .content ul li { margin-bottom: 0.3rem; }
-
-    /* ---------- Botão voltar ao topo ---------- */
-    #toTop {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    #toTop.visible { opacity: 1; pointer-events: auto; }
-
-    /* ---------- Botão hambúrguer (mobile) ---------- */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      z-index: 1000;
-    }
-
-    /* ---------- Responsivo ---------- */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        z-index: 999;
-      }
-      .sidebar.open { transform: translateX(0); }
-      .content { margin-left: 0; padding: 3rem 1.5rem 2rem; }
-      .menu-toggle { display: block; }
-    }
-  </style>
+    .sidebar-title { margin-bottom: 12px; }
+    .toc-sub { margin-left: 20px; }
+    .menu-toggle { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); }
+    .nav-actions .search-btn, .nav-actions .btn-ghost { display: none; } /* Esconde elementos secundários no mobile */
+    .feature-grid { grid-template-columns: 1fr; }
+    .chapter-nav { grid-template-columns: 1fr; }
+    .chapter-head { flex-direction: column; gap: 14px; }
+  }
+  @media (max-width: 500px) {
+    .cover-meta { flex-direction: column; gap: 14px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+  }
+</style>
 </head>
 <body>
 
-  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+<!-- Barra de progresso de leitura (controlada por JS) -->
+<div class="progress-bar"><div class="progress-bar-fill" id="progressBar"></div></div>
 
-  <div class="layout">
-    <!-- ========== SUMÁRIO ========== -->
-    <aside class="sidebar" id="sidebar">
-      <h2>📘 Sumário</h2>
-      <input type="text" class="search" id="search" placeholder="🔍 Buscar assunto..." />
-
-      <ul class="toc" id="toc">
-        <li>
-          <a href="#introducao">1. Introdução</a>
-          <ul class="sub">
-            <li><a href="#objetivo">1.1 Objetivo</a></li>
-            <li><a href="#publico">1.2 Público-alvo</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#organizacao">2. Organização do Projeto</a>
-          <ul class="sub">
-            <li><a href="#estrutura">2.1 Estrutura de pastas</a></li>
-            <li><a href="#nomenclatura">2.2 Nomenclatura</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#estilo">3. Estilo de Código</a>
-          <ul class="sub">
-            <li><a href="#indentacao">3.1 Indentação</a></li>
-            <li><a href="#comentarios">3.2 Comentários</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#git">4. Controle de Versão (Git)</a>
-          <ul class="sub">
-            <li><a href="#commits">4.1 Mensagens de commit</a></li>
-            <li><a href="#branches">4.2 Branches</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#revisao">5. Revisão de Código</a>
-          <ul class="sub">
-            <li><a href="#checklist">5.1 Checklist</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#contato">6. Contato e Suporte</a>
-        </li>
-      </ul>
-    </aside>
-
-    <!-- ========== CONTEÚDO ========== -->
-    <main class="content">
-      <h1>Manual de Boas Práticas de Desenvolvimento</h1>
-      <p><em>Versão 1.0 — Agosto de 2026</em></p>
-
-      <section id="introducao">
-        <h2>1. Introdução</h2>
-        <p>Este manual reúne as diretrizes adotadas pela equipe para garantir qualidade, consistência e produtividade no desenvolvimento de software.</p>
-
-        <h3 id="objetivo">1.1 Objetivo</h3>
-        <p>Estabelecer padrões claros para que todos os membros do time produzam código legível, testável e sustentável.</p>
-
-        <h3 id="publico">1.2 Público-alvo</h3>
-        <p>Desenvolvedores, analistas, QA e qualquer pessoa envolvida no ciclo de vida do software.</p>
-      </section>
-
-      <section id="organizacao">
-        <h2>2. Organização do Projeto</h2>
-        <p>Uma boa organização facilita a manutenção e a entrada de novos membros no projeto.</p>
-
-        <h3 id="estrutura">2.1 Estrutura de pastas</h3>
-        <ul>
-          <li><code>src/</code> — código-fonte principal</li>
-          <li><code>tests/</code> — testes automatizados</li>
-          <li><code>docs/</code> — documentação</li>
-          <li><code>scripts/</code> — utilitários e automações</li>
-        </ul>
-
-        <h3 id="nomenclatura">2.2 Nomenclatura</h3>
-        <p>Utilize nomes descritivos em inglês, seguindo o padrão <em>camelCase</em> para variáveis e funções, e <em>PascalCase</em> para classes.</p>
-      </section>
-
-      <section id="estilo">
-        <h2>3. Estilo de Código</h2>
-        <p>Manter um estilo consistente reduz o ruído cognitivo durante revisões.</p>
-
-        <h3 id="indentacao">3.1 Indentação</h3>
-        <p>Use 2 espaços por nível de indentação. Configure seu editor para aplicar essa regra automaticamente.</p>
-
-        <h3 id="comentarios">3.2 Comentários</h3>
-        <p>Comente o <strong>porquê</strong>, não o <strong>o quê</strong>. O código deve ser autoexplicativo; comentários servem para explicar decisões não óbvias.</p>
-      </section>
-
-      <section id="git">
-        <h2>4. Controle de Versão (Git)</h2>
-        <p>O Git é a ferramenta oficial de versionamento. Siga as convenções abaixo.</p>
-
-        <h3 id="commits">4.1 Mensagens de commit</h3>
-        <p>Use o padrão <em>Conventional Commits</em>: <code>tipo(escopo): descrição</code>. Exemplos: <code>feat(auth): adiciona login com 2FA</code>, <code>fix(api): corrige timeout</code>.</p>
-
-        <h3 id="branches">4.2 Branches</h3>
-        <ul>
-          <li><code>main</code> — produção</li>
-          <li><code>develop</code> — integração</li>
-          <li><code>feature/*</code>, <code>fix/*</code>, <code>hotfix/*</code> — branches temporárias</li>
-        </ul>
-      </section>
-
-      <section id="revisao">
-        <h2>5. Revisão de Código</h2>
-        <p>Toda alteração deve passar por pelo menos uma revisão antes de ser integrada.</p>
-
-        <h3 id="checklist">5.1 Checklist</h3>
-        <ul>
-          <li>Código segue o estilo definido</li>
-          <li>Testes foram adicionados/atualizados</li>
-          <li>Documentação relevante atualizada</li>
-          <li>Sem credenciais ou dados sensíveis</li>
-        </ul>
-      </section>
-
-      <section id="contato">
-        <h2>6. Contato e Suporte</h2>
-        <p>Dúvidas? Entre em contato pelo canal <strong>#dev-boas-praticas</strong> no chat interno ou envie e-mail para <em>dev-team@empresa.com</em>.</p>
-      </section>
-    </main>
+<!-- Navbar Fixa -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </span>
+      <div>
+        <div>SuaMarca <span class="logo-sub">Manual v2.0</span></div>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="search-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar... <kbd>⌘K</kbd>
+      </button>
+      <a href="#" class="btn btn-ghost">PDF</a>
+      <a href="#" class="btn btn-primary">Baixar</a>
+      <button class="menu-toggle" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
   </div>
+</nav>
 
-  <button id="toTop" aria-label="Voltar ao topo">↑</button>
+<!-- Layout Principal -->
+<div class="layout" id="top">
+  <!-- Sumário Lateral -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-title">Sumário</div>
+      <ul class="toc" id="toc">
+        <!-- Os hrefs (#cap-X) correspondem aos IDs dos <article> abaixo -->
+        <li class="toc-item">
+          <a href="#cap-1" class="toc-link"><span class="toc-num">01</span>Introdução</a>
+          <ul class="toc-sub">
+            <li><a href="#cap-1-1" class="toc-link">Sobre este manual</a></li>
+            <li><a href="#cap-1-2" class="toc-link">Público-alvo</a></li>
+          </ul>
+        </li>
+        <li class="toc-item">
+          <a href="#cap-2" class="toc-link"><span class="toc-num">02</span>Começando</a>
+          <ul class="toc-sub">
+            <li><a href="#cap-2-1" class="toc-link">Requisitos</a></li>
+            <li><a href="#cap-2-2" class="toc-link">Instalação</a></li>
+          </ul>
+        </li>
+        <li class="toc-item"><a href="#cap-3" class="toc-link"><span class="toc-num">03</span>Configuração</a></li>
+        <li class="toc-item"><a href="#cap-4" class="toc-link"><span class="toc-num">04</span>Uso básico</a></li>
+        <li class="toc-item"><a href="#cap-5" class="toc-link"><span class="toc-num">05</span>Recursos avançados</a></li>
+        <li class="toc-item"><a href="#cap-6" class="toc-link"><span class="toc-num">06</span>Solução de problemas</a></li>
+        <li class="toc-item"><a href="#cap-7" class="toc-link"><span class="toc-num">07</span>FAQ</a></li>
+        <li class="toc-item"><a href="#cap-8" class="toc-link"><span class="toc-num">08</span>Contato e suporte</a></li>
+      </ul>
+    </div>
+  </aside>
 
-  <script>
-    /* ===== Scroll suave nos links do sumário ===== */
-    document.querySelectorAll('.toc a').forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          // Fecha menu mobile após clique
-          sidebar.classList.remove('open');
-        }
-      });
+  <!-- Conteúdo Principal -->
+  <main class="content">
+    <section class="cover reveal">
+      <span class="cover-badge"><span class="cover-badge-dot"></span> Atualizado em Agosto 2026</span>
+      <h1>Manual completo da <span class="gradient-text">SuaMarca</span></h1>
+      <p class="cover-lead">Guia definitivo para instalar, configurar e dominar todas as funcionalidades da plataforma. Do zero ao avançado, com exemplos práticos e dicas de especialistas.</p>
+      <div class="cover-meta">
+        <div class="meta-item"><span class="meta-label">Versão</span><span class="meta-value">2.0.4</span></div>
+        <div class="meta-item"><span class="meta-label">Páginas</span><span class="meta-value">48</span></div>
+        <div class="meta-item"><span class="meta-label">Leitura</span><span class="meta-value">~25 min</span></div>
+        <div class="meta-item"><span class="meta-label">Autor</span><span class="meta-value">Equipe SuaMarca</span></div>
+      </div>
+    </section>
+
+    <!-- CAPÍTULO 1 -->
+    <article class="chapter reveal" id="cap-1">
+      <div class="chapter-head">
+        <div class="chapter-num">01</div>
+        <div>
+          <h2 class="chapter-title">Introdução</h2>
+          <p class="chapter-subtitle">Bem-vindo ao ecossistema — entenda o que você vai encontrar aqui.</p>
+        </div>
+      </div>
+      <p>Este manual foi pensado para ser o seu companheiro em cada etapa da jornada. Seja você um iniciante dando os primeiros passos ou um usuário avançado buscando otimizar fluxos complexos, aqui você encontrará tudo o que precisa.</p>
+      <h3 id="cap-1-1">Sobre este manual</h3>
+      <p>Estruturamos o conteúdo em capítulos progressivos. Cada seção traz exemplos práticos, callouts de atenção e atalhos para os tópicos mais procurados. Use o <strong>sumário lateral</strong> para navegar rapidamente.</p>
+      <div class="callout info">
+        <div class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+        <div class="callout-content">
+          <div class="callout-title">Informação</div>
+          <p class="callout-text">Blocos como este trazem informações complementares importantes, mas não essenciais.</p>
+        </div>
+      </div>
+      <h3 id="cap-1-2">Público-alvo</h3>
+      <p>Este material é indicado para:</p>
+      <ul>
+        <li><strong>Novos usuários</strong> que estão conhecendo a plataforma</li>
+        <li><strong>Administradores</strong> responsáveis pela configuração</li>
+        <li><strong>Desenvolvedores</strong> que desejam integrar via API</li>
+        <li><strong>Gestores</strong> buscando entender capacidades e limites</li>
+      </ul>
+    </article>
+
+    <!-- CAPÍTULO 2 -->
+    <article class="chapter reveal" id="cap-2">
+      <div class="chapter-head">
+        <div class="chapter-num">02</div>
+        <div>
+          <h2 class="chapter-title">Começando</h2>
+          <p class="chapter-subtitle">Prepare o ambiente e faça sua primeira configuração em minutos.</p>
+        </div>
+      </div>
+      <h3 id="cap-2-1">Requisitos</h3>
+      <p>Antes de iniciar, verifique se você atende aos pré-requisitos abaixo:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Mínimo</th><th>Recomendado</th></tr></thead>
+          <tbody>
+            <tr><td>Sistema operacional</td><td>Windows 10 / macOS 12</td><td>Windows 11 / macOS 14</td></tr>
+            <tr><td>Memória RAM</td><td>4 GB</td><td>8 GB+</td></tr>
+            <tr><td>Conexão</td><td>5 Mbps</td><td>20 Mbps+</td></tr>
+            <tr><td>Navegador</td><td>Chrome 110+</td><td>Última versão estável</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 id="cap-2-2">Instalação</h3>
+      <p>Siga os passos abaixo para completar a instalação:</p>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content"><h5>Baixe o instalador</h5><p>Acesse o site oficial e clique em "Baixar" na página principal.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content"><h5>Execute o arquivo</h5><p>Dê duplo clique no instalador e siga as instruções na tela.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content"><h5>Faça login</h5><p>Use suas credenciais ou crie uma nova conta em segundos.</p></div>
+        </div>
+      </div>
+      <div class="callout tip">
+        <div class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.9.8 1.3 1.5 1.3 2.3V18h5.4c0-.8.4-1.5 1.3-2.3A7 7 0 0 0 12 2z"/></svg></div>
+        <div class="callout-content">
+          <div class="callout-title">Dica</div>
+          <p class="callout-text">Ative a instalação automática de atualizações nas preferências para manter sempre a versão mais recente.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- CAPÍTULO 3 -->
+    <article class="chapter reveal" id="cap-3">
+      <div class="chapter-head">
+        <div class="chapter-num">03</div>
+        <div>
+          <h2 class="chapter-title">Configuração</h2>
+          <p class="chapter-subtitle">Ajuste as preferências para o seu cenário específico.</p>
+        </div>
+      </div>
+      <p>Após a instalação, acesse o painel de configurações através do menu superior. As principais áreas são: <code>Geral</code>, <code>Segurança</code>, <code>Integrações</code> e <code>Aparência</code>.</p>
+      <pre><code># Exemplo de configuração básica
+config = {
+  "theme": "dark",
+  "language": "pt-BR",
+  "autoSave": true,
+  "notifications": {
+    "email": true,
+    "push": false
+  }
+}</code></pre>
+      <div class="callout warning">
+        <div class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="callout-content">
+          <div class="callout-title">Atenção</div>
+          <p class="callout-text">Alterações em configurações avançadas podem afetar o comportamento do sistema. Faça backup antes de modificar parâmetros críticos.</p>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+          <h5>Personalização total</h5>
+          <p>Ajuste cada aspecto da interface conforme sua preferência.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h5>Segurança avançada</h5>
+          <p>2FA, logs de auditoria e controle granular de permissões.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- CAPÍTULO 4 -->
+    <article class="chapter reveal" id="cap-4">
+      <div class="chapter-head">
+        <div class="chapter-num">04</div>
+        <div>
+          <h2 class="chapter-title">Uso básico</h2>
+          <p class="chapter-subtitle">As operações do dia a dia que você vai realizar com frequência.</p>
+        </div>
+      </div>
+      <p>A interface principal é dividida em três áreas: <strong>barra lateral</strong> com navegação, <strong>área central</strong> de trabalho e <strong>painel de contexto</strong> à direita.</p>
+      <h4>Operações essenciais</h4>
+      <ol>
+        <li><strong>Criar novo projeto</strong> — botão <code>+ Novo</code> no topo</li>
+        <li><strong>Salvar</strong> — automático a cada 30s ou <code>Ctrl+S</code></li>
+        <li><strong>Compartilhar</strong> — ícone de link no canto superior direito</li>
+        <li><strong>Exportar</strong> — menu <code>Arquivo → Exportar</code></li>
+      </ol>
+      <div class="callout danger">
+        <div class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+        <div class="callout-content">
+          <div class="callout-title">Cuidado</div>
+          <p class="callout-text">Ações destrutivas como excluir projetos não podem ser desfeitas. Confirme sempre antes de prosseguir.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- CAPÍTULO 5 -->
+    <article class="chapter reveal" id="cap-5">
+      <div class="chapter-head">
+        <div class="chapter-num">05</div>
+        <div>
+          <h2 class="chapter-title">Recursos avançados</h2>
+          <p class="chapter-subtitle">Leve sua experiência ao próximo nível com funcionalidades premium.</p>
+        </div>
+      </div>
+      <p>Usuários experientes podem explorar automações, integrações via API, webhooks e scripts personalizados. Esta seção apresenta os principais recursos.</p>
+      <h4>Automações</h4>
+      <p>Crie fluxos automatizados combinando gatilhos e ações. Por exemplo: "quando um novo formulário for enviado, enviar notificação no Slack e criar tarefa no board".</p>
+      <h4>API & Webhooks</h4>
+      <pre><code>GET /api/v2/projects
+Authorization: Bearer SEU_TOKEN
+Content-Type: application/json
+
+// Resposta
+{
+  "data": [...],
+  "total": 42,
+  "page": 1
+}</code></pre>
+    </article>
+
+    <!-- CAPÍTULO 6 -->
+    <article class="chapter reveal" id="cap-6">
+      <div class="chapter-head">
+        <div class="chapter-num">06</div>
+        <div>
+          <h2 class="chapter-title">Solução de problemas</h2>
+          <p class="chapter-subtitle">Respostas rápidas para os erros mais comuns.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Problema</th><th>Causa</th><th>Solução</th></tr></thead>
+          <tbody>
+            <tr><td>Erro 401</td><td>Token expirado</td><td>Renove suas credenciais</td></tr>
+            <tr><td>Lentidão</td><td>Cache cheio</td><td>Limpe cache em Configurações</td></tr>
+            <tr><td>Sincronização falha</td><td>Conexão instável</td><td>Verifique sua internet</td></tr>
+            <tr><td>Plugin não carrega</td><td>Versão incompatível</td><td>Atualize o plugin</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- CAPÍTULO 7 -->
+    <article class="chapter reveal" id="cap-7">
+      <div class="chapter-head">
+        <div class="chapter-num">07</div>
+        <div>
+          <h2 class="chapter-title">FAQ</h2>
+          <p class="chapter-subtitle">Perguntas frequentes respondidas de forma direta.</p>
+        </div>
+      </div>
+      <h4>Posso usar em mais de um dispositivo?</h4>
+      <p>Sim! Sua conta sincroniza automaticamente entre todos os dispositivos conectados.</p>
+      <h4>Existe versão gratuita?</h4>
+      <p>Sim, oferecemos um plano Starter com recursos essenciais sem custo.</p>
+      <h4>Como cancelar minha assinatura?</h4>
+      <p>Acesse <code>Configurações → Assinatura → Cancelar</code>. O acesso permanece até o fim do ciclo.</p>
+    </article>
+
+    <!-- CAPÍTULO 8 -->
+    <article class="chapter reveal" id="cap-8">
+      <div class="chapter-head">
+        <div class="chapter-num">08</div>
+        <div>
+          <h2 class="chapter-title">Contato e suporte</h2>
+          <p class="chapter-subtitle">Estamos aqui para ajudar — escolha o canal que preferir.</p>
+        </div>
+      </div>
+      <p>Nossa equipe de suporte está disponível <strong>24/7</strong> para ajudar você. Tempo médio de resposta: <strong>menos de 2 horas</strong>.</p>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h5>Email</h5><p>suporte@suamarca.com</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <h5>Chat ao vivo</h5><p>Disponível no canto inferior direito</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <h5>Telefone</h5><p>0800 123 4567</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <h5>Comunidade</h5><p>community.suamarca.com</p>
+        </div>
+      </div>
+      <div class="chapter-nav">
+        <a href="#cap-7" class="chapter-nav-item prev">
+          <span class="chapter-nav-label">← Anterior</span>
+          <span class="chapter-nav-title">FAQ</span>
+        </a>
+        <a href="#top" class="chapter-nav-item next">
+          <span class="chapter-nav-label">Voltar ao →</span>
+          <span class="chapter-nav-title">Início do manual</span>
+        </a>
+      </div>
+    </article>
+  </main>
+</div>
+
+<!-- Botão Flutuante -->
+<button class="back-top" id="backTop" aria-label="Voltar ao topo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+</button>
+
+<!-- Rodapé -->
+<footer>
+  <div class="footer-inner">
+    <div>© 2026 SuaMarca. Todos os direitos reservados.</div>
+    <div class="footer-links">
+      <a href="#">Termos</a><a href="#">Privacidade</a><a href="#">Status</a><a href="#">Changelog</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* =========================================
+     JAVASCRIPT: LÓGICA DE INTERAÇÃO E UX
+     ========================================= */
+
+  // 1. NAVBAR SCROLL EFFECT
+  // Adiciona a classe 'scrolled' à navbar quando o usuário rola mais de 20px.
+  // Isso aciona a borda inferior no CSS (.navbar.scrolled) para separar visualmente do conteúdo.
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // 2. BARRA DE PROGRESSO DE LEITURA
+  // Calcula a porcentagem da página já rolada e atualiza a largura (width) da div .progress-bar-fill
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY; // Pixels rolados do topo
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight; // Altura total rolável
+    const progress = (scrollTop / docHeight) * 100; // Regra de três para porcentagem
+    progressBar.style.width = progress + '%';
+  });
+
+  // 3. BOTÃO "VOLTAR AO TOPO"
+  // Mostra o botão quando rola mais de 500px. Ao clicar, usa scroll suave para voltar ao topo.
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('visible', window.scrollY > 500);
+  });
+  backTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 4. SCROLL-SPY DO SUMÁRIO (TOC HIGHLIGHT)
+  // Detecta qual capítulo está visível na tela e destaca o link correspondente no sumário lateral.
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = [];
+  
+  // Mapeia cada link do sumário para o elemento HTML real que ele aponta (via ID)
+  tocLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const el = document.querySelector(href);
+      if (el) sections.push({ el, link });
+    }
+  });
+
+  function updateToc() {
+    // 140px é o offset para compensar a altura da navbar fixa
+    const scrollPos = window.scrollY + 140;
+    let current = sections[0]; // Padrão: primeiro item
+    
+    // Percorre todas as seções; a última que tiver offsetTop <= posição atual do scroll é a "ativa"
+    for (const s of sections) {
+      if (s.el.offsetTop <= scrollPos) current = s;
+    }
+    
+    // Remove a classe 'active' de todos e adiciona apenas no atual
+    tocLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+  
+  // Executa a verificação a cada rolagem e também no carregamento inicial
+  window.addEventListener('scroll', updateToc);
+  updateToc();
+
+  // 5. ANIMAÇÕES DE REVELAÇÃO (INTERSECTION OBSERVER)
+  // Forma performática de animar elementos apenas quando eles entram na tela (viewport).
+  // Muito mais leve do que calcular posições dentro do evento 'scroll'.
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible'); // Aciona a transição CSS de opacidade e translateY
+        observer.unobserve(entry.target); // Para de observar após animar uma vez (economiza recursos)
+      }
     });
-
-    /* ===== Destacar item ativo conforme o scroll ===== */
-    const sections = document.querySelectorAll('.content section, .content h3[id]');
-    const tocLinks = document.querySelectorAll('.toc a');
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.id;
-          tocLinks.forEach(link => {
-            link.classList.toggle('active',
-              link.getAttribute('href') === '#' + id);
-          });
-        }
-      });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-
-    sections.forEach(sec => observer.observe(sec));
-
-    /* ===== Busca/filtro no sumário ===== */
-    const search = document.getElementById('search');
-    search.addEventListener('input', () => {
-      const term = search.value.toLowerCase().trim();
-      document.querySelectorAll('.toc li').forEach(li => {
-        const text = li.textContent.toLowerCase();
-        li.style.display = text.includes(term) ? '' : 'none';
-      });
-    });
-
-    /* ===== Botão voltar ao topo ===== */
-    const toTop = document.getElementById('toTop');
-    window.addEventListener('scroll', () => {
-      toTop.classList.toggle('visible', window.scrollY > 400);
-    });
-    toTop.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    /* ===== Menu hambúrguer (mobile) ===== */
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
-  </script>
+  }, { 
+    threshold: 0.08 // Dispara quando 8% do elemento estiver visível na tela
+  });
+  
+  // Aplica o observador a todos os elementos com a classe .reveal
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
