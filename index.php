@@ -1,13 +1,14 @@
 <?php
 
-session_start();
+session_start(); // Iniciar a sessão
 
-//Inclui arquivo com a conexão com banco de dados
+// Incluir o arquivo com a conexão com banco de dados
 require_once('./connection.php');
+
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -17,55 +18,56 @@ require_once('./connection.php');
 
 <body>
 
-    <a href="create.php">Cadastrar</a><br>
+    <a href='create.php?id=id'>Cadastrar</a><br>
+    <a href='update.php?id=$id'>Atualizar</a>
 
     <h2>Listar Usuários</h2>
 
     <?php
 
-    //verificar se existe a mensagem de sucesso ou erro
+    // Verificar se existe a mensagem de sucesso ou erro
     if (isset($_SESSION['msg'])) {
 
-        //imprimir a mensagem de sucesso ou erro 
+        // Imprimir a mensagem de sucesso ou erro
         echo $_SESSION['msg'];
 
-        //limpar a mensagem de sucesso ou erro
+        // Destruir a mensagem de sucesso ou erro
         unset($_SESSION['msg']);
     }
-    if (isset($_SESSION['msg_error'])) {
 
+    // Criar a QUERY listar usuários
+    $sql = "SELECT id, name, email FROM users";
 
-        //Criar a query listar usuários
-        $sql = "SELECT id, name, email FROM users where id = :id";
+    // Preparar a QUERY
+    $stmt = $conn->prepare($sql);
 
-        //preparar a query
-        $stmt = $conn->prepare($sql);
+    // Executar a QUERY
+    $stmt->execute();
+    // var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
 
+    // Criar o laço de repetição para ler os registros
+    while ($row_user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        // var_dump($row_user);
 
-        // substituir os links da query pelos valores
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        // echo "ID: " . $row_user['id'] . "<br>";
+        // echo "Nome: " . $row_user['name'] . "<br>";
+        // echo "E-mail: " . $row_user['email'] . "<br>";
 
-        //executar a query
-        $stmt->execute();
+        // Extrair o array para imprimir os valores através do elemento do array
+        extract($row_user);
 
+        // Imprimir as informações do registro
+        echo "ID: $id<br>";
+        echo "Nome: $name<br>";
+        echo "E-mail: $email<br>";
 
-        while ($row_user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo "<a href='view.php?id=$id'>Visualizar</a><br>";
 
-
-            //ler os dados do registro
-            //$row_user = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-            // Extrair o array para imprimir os valores atraves do elemento do array
-            extract($row_user);
-
-
-            echo "ID: $id<br>";
-            echo "Nome: $name<br>";
-            echo "Email: $email<br>";
-        }
+        echo "<hr>";
     }
+
     ?>
+
 </body>
 
 </html>

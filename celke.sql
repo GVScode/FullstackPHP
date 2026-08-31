@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 28/07/2026 às 23:32
--- Versão do servidor: 8.4.7
--- Versão do PHP: 8.3.28
+-- Tempo de geração: 05/10/2024 às 18:04
+-- Versão do servidor: 8.3.0
+-- Versão do PHP: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,17 +33,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(220) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(220) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Despejando dados para a tabela `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`) VALUES
-(1, 'Guilherme Varjão Santos', 'guilhermmesantos98@gmail.com'),
-(2, 'Maria Silva', 'maria.silva@gmail.com');
+(1, 'Cesar', 'cesar@celke.com.br'),
+(2, 'Kelly', 'kelly@celke.com.br'),
+(3, 'Jessica', 'jessica@celke.com.br'),
+(4, 'Gabrielly', 'gabrielly@celke.com.br');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
