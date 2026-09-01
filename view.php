@@ -1,14 +1,15 @@
 <?php
 
-session_start(); // Inicia a sessão 
+session_start(); // Iniciar a sessão
 
-//Inclui arquivo com a conexão com banco de dados
+ob_start(); // Limpar o buffer
+
+// Incluir o arquivo com a conexão com banco de dados
 require_once('./connection.php');
+
 ?>
-
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -20,49 +21,47 @@ require_once('./connection.php');
 
     <a href="index.php">Listar</a><br>
 
-    <h2>Visualizar usuário</h2>
+    <h2>Visualizar Usuário</h2>
 
     <?php
 
+    // Receber o id da URL
     $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-    //Criar a query listar usuários
+    // Criar a QUERY visualizar usuários
     $sql = "SELECT id, name, email FROM users WHERE id = :id";
 
-
-    // Preparar a query
+    // Preparar a QUERY
     $stmt = $conn->prepare($sql);
 
-    //Substituir os links da QUERY pelos valores
+    // Substituir os links da QUERY pelos valores
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-    // Executar a query
+    // Executar a QUERY
     $stmt->execute();
 
-    //Ler os dados do registro
+    // Ler os dados do registro
     $row_user = $stmt->fetch(PDO::FETCH_ASSOC);
-    var_dump($row_user);
+    // var_dump($row_user);
 
-    if ($row_uaer ?? false) {
-
-        // Extrair o array para imprimir os valores atraves do elemento do array
+    // Verificar se encontrou o registro no banco de dados
+    if ($row_user ?? false) {
+        // Extrair o array para imprimir os valores através do elemento do array
         extract($row_user);
 
-
-        echo "ID: " . $id . "<br>";
-        echo "Nome: " . $name . "<br>";
-        echo "Email: " . $email . "<br>";
+        echo "ID: $id<br>";
+        echo "Nome: $name<br>";
+        echo "E-mail: $email<br>";
     } else {
 
-        $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Usuário não encontrado!</p>";
+        // Criar mensagem de erro e salvar na variável global
+        $_SESSION['msg'] = "<p style='color: #f00;'>Usuário não encontrado!</p>";
 
+        // Redirecionar o usuário para a página listar
         header("Location: index.php");
+
     }
-
     ?>
-
-
-
 
 </body>
 
