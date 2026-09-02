@@ -20,7 +20,6 @@ require_once('./connection.php');
 <body>
 
     <a href="index.php">Listar</a><br>
-
     <h2>Visualizar Usuário</h2>
 
     <?php
@@ -46,6 +45,7 @@ require_once('./connection.php');
 
     // Verificar se encontrou o registro no banco de dados
     if ($row_user ?? false) {
+
         // Extrair o array para imprimir os valores através do elemento do array
         extract($row_user);
 
@@ -59,7 +59,6 @@ require_once('./connection.php');
 
         // Redirecionar o usuário para a página listar
         header("Location: index.php");
-
     }
     ?>
 
