@@ -4,7 +4,10 @@ $host = "localhost";
 $user = "root";
 $pass = "";
 $dbname = "celke";
-$port = 3307;
+//pab
+//$port = 3307;
+//Home
+$port = 3306;
 
 try {
 
