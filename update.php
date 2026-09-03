@@ -36,7 +36,7 @@ require_once('./connection.php');
     $stmt = $conn->prepare($sql);
 
     // substituir os links da QUERY pelos valores
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT); 
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
     //Executar  a QUERY
     $stmt->execute();
@@ -47,62 +47,63 @@ require_once('./connection.php');
 
 
     //verifica se nao encontrou o registro no banco de dados
-    if(!$row_user){
+    if (!$row_user) {
 
-    //Criar mensagem de erro e salvar na variavel global
-    $_SESSION['msg'] = "<p style='color: #f00;'>Usuário não encontrado!</p>";
+        //Criar mensagem de erro e salvar na variavel global
+        $_SESSION['msg'] = "<p style='color: #f00;'>Usuário não encontrado!</p>";
 
-    // Redirecionar o usuario para a pg listar
-    header("location: index.php");
+        // Redirecionar o usuario para a pg listar
+        header("location: index.php");
 
-    //Parar o processamento
-    return;
-
+        //Parar o processamento
+        return;
     }
 
     // Extrair o array para imprimir os valores através do elemento do array
-        extract($row_user);
+    extract($row_user);
 
     // Receber os dados do formulario
     $data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
     var_dump($data);
 
-     // Verificar se o token CSRF é válido
+    // Verificar se o token CSRF é válido
     if (isset($data['csrf_token']) && hash_equals($_SESSION['csrf_tokens']['form_update_user'], $data['csrf_token'])) {
-    var_dump($data);
+        var_dump($data);
     }
 
-     // Tratar exceções e erros
-        try {
+    // Tratar exceções e erros
+    try {
 
-    //     // $sql = "UPDATE users 
+//criar a QUERY editar usuario
 
-    // //        SET name = :name, email = :email 
-    // //        WHERE id = :id";
+            $sql = "UPDATE users 
 
-    // // // Preparar a QUERY
-    // // $stmt = $conn->prepare($sql);
-    // // $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    // // $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    // // $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            SET name = :name, email = :email 
+            WHERE id = :id";
 
-    // // IF ($stmt->execute()) {
-    // //     echo "<p style= 'color: #086;'>Registro atualizado com sucesso!</p>";
-    // // } else {
-    // //     echo "<p style= 'color: #f00;'>Erro ao atualizar o registro!</p>";
-    // // }
+     //Preparar a QUERY
+     $stmt = $conn->prepare($sql);
+
+     // Substituir os links da QUERY pelos valores
+     $stmt->bindParam(':name', $data['name'], PDO::PARAM_STR);
+     $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+     $stmt->bindParam(':id', $data['csrf_id'], PDO::PARAM_INT);
+
+     IF ($stmt->execute()) {
+         echo "<p style= 'color: #086;'>Usuário editado com sucesso!</p>";
+     } else {
+         echo "<p style= 'color: #f00;'>Erro ao editar o Usuario!</p>";
+     }
+
+    } catch (Exception $e) {
+        echo "<p style='color: #f00;'>Usuário não editado!</p>";
+    }
 
 
-        } catch (Exception $e) {
-            echo "<p style='color: #f00;'>Usuário não editado!</p>";
-        }
-        
 
-    
-   
     ?>
 
-     <form method="POST" action="">
+    <form method="POST" action="">
         <?php
         // A função random_bytes gera uma sequência de 32 bytes aleatórios.
         // A função bin2hex converte os bytes binários gerados pela random_bytes em uma representação hexadecimal.
@@ -114,7 +115,7 @@ require_once('./connection.php');
         ?>
         <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
         <input type="hidden" name="csrf_id" value="<?php echo $id; ?>">
-        
+
 
         <label>Nome: </label>
         <input type="text" name="name" placeholder="Nome completo" value="<?php echo $data['name'] ?? $name; ?>" required><br><br>
