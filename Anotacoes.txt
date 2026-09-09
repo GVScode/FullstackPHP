@@ -523,4 +523,7 @@ $$========================================$$
 
 Formulário editar registro no banco de dados 14:00
 
+$$========================================$$
+08/09/2026
 
+inicio CRUD - apagar registro do banco de dados
