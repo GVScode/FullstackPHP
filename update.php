@@ -5,6 +5,9 @@ session_start(); // Iniciar a sessão
 // Incluir o arquivo com a conexão com banco de dados
 require_once('./connection.php');
 
+//Receber o id da URL
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+
 ?>
 
 
@@ -21,13 +24,11 @@ require_once('./connection.php');
 
 
     <a href="index.php">Listar</a>
+    <a href="view.php?id=<?php echo $id; ?>">Visualizar</a>
 
     <h2>Editar Usuário</h2>
 
     <?php
-
-    //Receber o id da URL
-    $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     //Criar a query visualizar usuarios
     $sql = "SELECT id, name, email FROM users WHERE id = :id";
@@ -43,9 +44,7 @@ require_once('./connection.php');
 
     //Ler os dados do registro
     $row_user = $stmt->fetch(PDO::FETCH_ASSOC);
-    var_dump($row_user);
-
-
+  
     //verifica se nao encontrou o registro no banco de dados
     if (!$row_user) {
 
@@ -68,8 +67,7 @@ require_once('./connection.php');
 
     // Verificar se o token CSRF é válido
     if (isset($data['csrf_token']) && hash_equals($_SESSION['csrf_tokens']['form_update_user'], $data['csrf_token'])) {
-        var_dump($data);
-    }
+    
 
     // Tratar exceções e erros
     try {
@@ -90,13 +88,24 @@ require_once('./connection.php');
      $stmt->bindParam(':id', $data['csrf_id'], PDO::PARAM_INT);
 
      IF ($stmt->execute()) {
-         echo "<p style= 'color: #086;'>Usuário editado com sucesso!</p>";
+         // Criar mensagem de erro e salvar na variável global
+                $_SESSION['msg'] = "<p style='color: #086;'>Usuário editado com sucesso!</p>";
+
+                // Redirecionar o usuário para a página listar
+                // header("Location: index.php");
+
+                // Redirecionar o usuário para a página visualizar
+                header("Location: view.php?id=$id");
+
+                // Parar o processamento da página
+                return;
      } else {
          echo "<p style= 'color: #f00;'>Erro ao editar o Usuario!</p>";
      }
 
     } catch (Exception $e) {
         echo "<p style='color: #f00;'>Usuário não editado!</p>";
+    }
     }
 
 

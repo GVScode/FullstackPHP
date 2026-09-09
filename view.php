@@ -7,6 +7,10 @@ ob_start(); // Limpar o buffer
 // Incluir o arquivo com a conexão com banco de dados
 require_once('./connection.php');
 
+// Receber o id da URL
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -20,12 +24,22 @@ require_once('./connection.php');
 <body>
 
     <a href="index.php">Listar</a><br>
+    <a href="update.php?id=<?php echo $id; ?>">Editar</a><br>
+
+
     <h2>Visualizar Usuário</h2>
 
     <?php
 
-    // Receber o id da URL
-    $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+    // Verificar se existe a mensagem de sucesso ou erro
+    if (isset($_SESSION['msg'])) {
+
+        // Imprimir a mensagem de sucesso ou erro
+        echo $_SESSION['msg'];
+
+        // Destruir a mensagem de sucesso ou erro
+        unset($_SESSION['msg']);
+    }
 
     // Criar a QUERY visualizar usuários
     $sql = "SELECT id, name, email FROM users WHERE id = :id";

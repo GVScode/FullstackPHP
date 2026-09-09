@@ -18,7 +18,7 @@ require_once('./connection.php');
 
 <body>
 
-    <a href='create.php?id=id'>Cadastrar</a><br>
+    <a href="create.php">Cadastrar</a><br>
 
     <h2>Listar Usuários</h2>
 
@@ -61,7 +61,7 @@ require_once('./connection.php');
         echo "E-mail: $email<br>";
 
         echo "<a href='view.php?id=$id'>Visualizar</a><br>";
-        echo "<a href='update.php?$=$id'>Editar</a><br>";
+        echo "<a href='update.php?id=$id'>Editar</a><br>";
 
         echo "<hr>";
     }
