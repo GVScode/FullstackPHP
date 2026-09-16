@@ -51,3 +51,10 @@ if ($id) {
     } catch (Exception $e) {
     }
 }
+
+
+//Criar mensagem de erro e salvar na variavel global
+$_SESSION['msg'] = "<p style='color: #f00;'>Erro: Usuário não apagado!</p>";
+
+// Redirecionar o usuario para a pg listar
+header("location: index.php");
