@@ -2,16 +2,11 @@
 
 session_start(); // Iniciar a sessão
 
-ob_start(); // Limpar o buffer
-
 // Incluir o arquivo com a conexão com banco de dados
 require_once('./connection.php');
 
-// Receber o id da URL
-$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -19,15 +14,14 @@ $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Celke</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <a href="index.php">Listar</a><br>
-    <a href="update.php?id=<?php echo $id; ?>">Editar</a><br>
+    <a href="create.php">Cadastrar</a><br>
 
-
-    <h2>Visualizar Usuário</h2>
+    <h2>Listar Usuários</h2>
 
     <?php
 
@@ -41,39 +35,39 @@ $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
         unset($_SESSION['msg']);
     }
 
-    // Criar a QUERY visualizar usuários
-    $sql = "SELECT id, name, email FROM users WHERE id = :id";
+    // Criar a QUERY listar usuários
+    $sql = "SELECT id, name, email FROM users";
 
     // Preparar a QUERY
     $stmt = $conn->prepare($sql);
 
-    // Substituir os links da QUERY pelos valores
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
     // Executar a QUERY
     $stmt->execute();
+    // var_dump($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-    // Ler os dados do registro
-    $row_user = $stmt->fetch(PDO::FETCH_ASSOC);
-    // var_dump($row_user);
+    // Criar o laço de repetição para ler os registros
+    while ($row_user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        // var_dump($row_user);
 
-    // Verificar se encontrou o registro no banco de dados
-    if ($row_user ?? false) {
+        // echo "ID: " . $row_user['id'] . "<br>";
+        // echo "Nome: " . $row_user['name'] . "<br>";
+        // echo "E-mail: " . $row_user['email'] . "<br>";
 
         // Extrair o array para imprimir os valores através do elemento do array
         extract($row_user);
 
+        // Imprimir as informações do registro
         echo "ID: $id<br>";
         echo "Nome: $name<br>";
         echo "E-mail: $email<br>";
-    } else {
 
-        // Criar mensagem de erro e salvar na variável global
-        $_SESSION['msg'] = "<p style='color: #f00;'>Usuário não encontrado!</p>";
+        echo "<a href='view.php?id=$id'>Visualizar</a><br>";
+        echo "<a href='update.php?id=$id'>Editar</a><br>";
+        echo "<a href='delete.php?id=$id'>Apagar</a><br>";
 
-        // Redirecionar o usuário para a página listar
-        header("Location: index.php");
+        echo "<hr>";
     }
+        
     ?>
 
 </body>
