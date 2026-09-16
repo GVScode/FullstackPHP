@@ -32,7 +32,7 @@ $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     <?php
 
-    // Verificar se existe a mensagem de sucesso ou erro
+    // Verificar se existe a mensagem de sucesso ou erro 
     if (isset($_SESSION['msg'])) {
 
         // Imprimir a mensagem de sucesso ou erro
