@@ -64,7 +64,7 @@ $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     // Receber os dados do formulario
     $data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-    var_dump($data);
+    //var_dump($data);
 
     // Verificar se o token CSRF é válido
     if (isset($data['csrf_token']) && hash_equals($_SESSION['csrf_tokens']['form_update_user'], $data['csrf_token'])) {
