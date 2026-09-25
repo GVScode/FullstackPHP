@@ -4,31 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celke - Classe e objetos</title>
+    <title>Celke</title>
 </head>
 
 <body>
 
     <?php
 
-    // Incluir o arquivo da classe Usuario
-    require_once('./Usuario.php');
+    // Incluir o arquivo que possui a classe
+    require './Usuario.php';
 
-    // Instanciar a classe Usuario e criar o objeto $usuario
-    $usuario = new Usuario();
+    // Instanciar a classe e criar o objeto
+    $usuario = new Usuario;
 
-    // Chamar o método cadastrar() da classe Usuario
-    $msg = $usuario->cadastrar();
+    // Chamar o método cadastrar
+    $msg = $usuario->cadastrar("Cesar", "cesar@celke.com.br", 37);
 
-    // Imprimir a mensagem de sucesso
+    // Imprimir a mensagem recebida do método
     echo $msg;
 
-
-
-
-
-
     ?>
+
 </body>
 
 </html>
