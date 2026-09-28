@@ -26,6 +26,8 @@ class Usuario
     /**
      * Cadastra um novo usuário com os dados fornecidos.
      * 
+     * Este metodo recebe o nome, e-mail e idade do usuário como parâmetros, armazena esses valores nos atributos da classe e retorna uma mensagem de sucesso indicando que o usuário foi cadastrado com sucesso.
+     * 
      * @param string $nome Nome do usuário
      * @param string $email E-mail do usuário
      * @param int $idade Idade do usuário
