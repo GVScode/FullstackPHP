@@ -102,3 +102,81 @@ Este arquivo instancia os objetos e demonstra o funcionamento prático da heran�
 * `$clientePJ = new ClientePessoaJuridica();`: Cria o objeto de pessoa jurídica.
 * Define também os dados de endereço herdados e os dados de empresa (`$nomeFantasia`, `$cnpj`).
 * Executa `verInformacaoEmpresa()`, imprimindo a estrutura formatada com os dados da empresa.
+
+
+Uma **classe abstrata** é um modelo/molde que serve como base para outras classes, mas **não pode ser instanciada diretamente** (ou seja, você nunca executará `new Investimento()`). Ela é utilizada quando temos atributos e comportamentos comuns a uma "família" de objetos, mas a entidade em si é genérica demais para existir por conta própria.
+
+No seu exemplo, a ideia é que um "Investimento" é um conceito genérico: todo investimento possui um valor, um tipo e precisa de formatação monetária. Porém, o cálculo do rendimento depende da modalidade específica (Renda Fixa, Fundo de Investimento, Ações, etc.).
+
+---
+
+
+
+
+## Classe Abstrata
+
+### 1. A Classe Abstrata Base (`Investimento.php`)
+
+A declaração `abstract class Investimento` estabelece este contrato base.
+
+* **Impossibilidade de Instanciação:** A palavra-chave `abstract` impede que o PHP execute `new Investimento()`. Se você tentar, o PHP disparará um erro fatal.
+* **Construtor com *Constructor Property Promotion* (PHP 8+):**
+```php
+public function __construct(public float $valor, public string $tipo) {}
+
+```
+
+
+Ao declarar os modificadores de visibilidade (`public`) nos parâmetros do método construtor, o PHP cria e atribui automaticamente as propriedades `$this->valor` e `$this->tipo`. As filhas reutilizam esse construtor ao serem instanciadas.
+* **Reutilização de Métodos Concretos (`convertReal`):**
+Classes abstratas podem conter métodos comuns prontos para uso. O método `convertReal()` usa `number_format()` para padronizar valores no formato BRL e fica disponível para todas as subclasse (como `RendaFixa` e `Fundo`).
+
+---
+
+### 2. As Subclasses Concretas (`RendaFixa.php` e `Fundo.php`)
+
+Ambas as classes herdam de `Investimento` através da instrução `extends`.
+
+* **Especialização do Comportamento:**
+* Em **`RendaFixa`**, o cálculo aplica um rendimento de 20% (`0.20 * $this->valor`).
+* Em **`Fundo`**, a taxa é de 40% (`0.40 * $this->valor`).
+
+
+* **Acesso a Atributos e Métodos da Base:**
+Dentro do método `calcularJuro()` de ambas as subclasses, é possível acessar diretamente:
+* Propriedades criadas pelo construtor da classe pai: `$this->valor` e `$this->tipo`.
+* Métodos utilitários da classe pai: `$this->convertReal()`.
+
+
+
+---
+
+### 3. Execução Principal (`index.php`)
+
+* **Tentativa Comentada de Instanciação Direta:**
+```php
+// $investimento = new Investimento(100.11, 'CDI');
+
+```
+
+
+O código exemplifica exatamente o propósito central: uma classe abstrata serve apenas para herança, não para criar objetos diretos.
+* **Instanciação Concreta:**
+```php
+$cofrinho = new RendaFixa(3000.33, 'Cofrinho');
+$fundo = new Fundo(4000.44, 'Fundo Multimercado');
+
+```
+
+
+Os objetos são criados a partir das classes filhas concretas. Quando passamos os argumentos `(3000.33, 'Cofrinho')`, eles são repassados ao construtor definido em `Investimento`.
+* **Chamada dos Métodos Especializados:**
+Cada objeto executa sua respectiva regra de cálculo de juros (`calcularJuro()`) enquanto utiliza a formatação monetária herdada da classe abstrata.
+
+---
+
+## Resumo dos Pontos-Chave
+
+1. **Abstração:** Protege o sistema contra instâncias genéricas indesejadas (não faz sentido existir um "investimento" genérico sem regras de rendimento).
+2. **Aproveitamento de Código:** O construtor e o método de conversão de moeda (`convertReal`) foram escritos apenas uma vez em `Investimento`.
+3. **Polimorfismo / Especialização:** Cada modalidade especifica sua própria implementação para calcular os juros, mantendo a coerência do sistema.
