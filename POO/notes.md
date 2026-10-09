@@ -113,7 +113,7 @@ No seu exemplo, a ideia é que um "Investimento" é um conceito genérico: todo 
 
 
 
-## Classe Abstrata
+## Classe Abstratax
 
 ### 1. A Classe Abstrata Base (`Investimento.php`)
 
