@@ -716,3 +716,9 @@ Cada objeto executa sua respectiva regra de cálculo de juros (`calcularJuro()`)
 1. **Abstração:** Protege o sistema contra instâncias genéricas indesejadas (não faz sentido existir um "investimento" genérico sem regras de rendimento).
 2. **Aproveitamento de Código:** O construtor e o método de conversão de moeda (`convertReal`) foram escritos apenas uma vez em `Investimento`.
 3. **Polimorfismo / Especialização:** Cada modalidade especifica sua própria implementação para calcular os juros, mantendo a coerência do sistema.
+
+
+$$========================================$$
+10/11/2026        Como usar herança para cadastrar registros
+
+min 12:30
