@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -8,10 +12,13 @@
 </head>
 
 <body>
-    <h2>Cadastrar Usuário</h2>
 
     <a href="create.php">Cadastrar Usuário</a><br>
     <a href="index.php">Listar Usuário</a><br><br>
+
+    <h2>Cadastrar Usuário</h2>
+
+
 
     <?php
 
@@ -19,13 +26,23 @@
 
     require './Connection.php';
 
-    // Importar a classe users QUE REALIZA A CONSULTA NO BANCO DE DADOS E RETORNA UM ARRAY COM OS USUÁRIOSque realiza a consulta aos usuarios
+    // Importar a classe users que realiza a consulta aos usuarios
     require './users.php';
 
     $formData = filter_input_array(INPUT_POST, FILTER_DEFAULT);
 
     if (!empty($formData['addUser'])) {
-       $createUser = new users();
+        $createUser = new users();
+        $createUser->setFormData($formData);
+        $value = $createUser->create();
+
+        if ($value) {
+            $_SESSION['MSG'] = "<p style='color:green;'>Usuário cadastrado com sucesso!</p>";
+            echo $_SESSION['MSG'];
+            header("Location: index.php");
+        } else {
+            echo "<p style='color:red;'>Erro ao cadastrar usuário!</p>";
+        }
     }
 
     ?>

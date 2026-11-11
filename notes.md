@@ -722,3 +722,12 @@ $$========================================$$
 10/11/2026        Como usar herança para cadastrar registros
 
 min 12:30
+
+$$========================================$$
+
+11/11/2026     terminando a aula Como usar herança para cadastrar registros
+
+
+seguir a partir de "como usar herança para visualizar o registro do banco de dados com PHP
+
+$$========================================$$
